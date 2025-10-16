@@ -8,13 +8,11 @@ export default defineConfig(({ mode }) => ({
       include: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
     }),
 
-    mode === 'production' &&
+    mode === 'false' &&
       obfuscatorPlugin({
-        compact: true,
-        controlFlowFlattening: true,
-        deadCodeInjection: true,
-        stringArray: true,
-        rotateStringArray: true,
+      compact: true,
+  stringArray: true,
+  rotateStringArray: true,
         stringArrayEncoding: ['rc4'],
         stringArrayThreshold: 0.75,
       }),
