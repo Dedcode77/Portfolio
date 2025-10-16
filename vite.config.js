@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import obfuscator from 'vite-plugin-obfuscator';
+import obfuscatorPlugin from 'vite-plugin-javascript-obfuscator';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -8,9 +8,8 @@ export default defineConfig(({ mode }) => ({
       include: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
     }),
 
-    // Activer l’obfuscation uniquement en production
     mode === 'production' &&
-      obfuscator({
+      obfuscatorPlugin({
         compact: true,
         controlFlowFlattening: true,
         deadCodeInjection: true,
@@ -22,6 +21,6 @@ export default defineConfig(({ mode }) => ({
   ],
 
   esbuild: {
-    loader: 'jsx', // Traite les fichiers .js comme du JSX
+    loader: 'jsx',
   },
 }));
