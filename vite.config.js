@@ -8,17 +8,30 @@ export default defineConfig(({ mode }) => ({
       include: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
     }),
 
-    mode === 'false' &&
+    mode === 'production' &&
       obfuscatorPlugin({
-      compact: true,
-  stringArray: true,
-  rotateStringArray: true,
+        compact: true,
+        controlFlowFlattening: true,
+        deadCodeInjection: true,
+        stringArray: true,
+        rotateStringArray: true,
         stringArrayEncoding: ['rc4'],
         stringArrayThreshold: 0.75,
       }),
-  ],
+  ].filter(Boolean), // Enlève les valeurs false
 
   esbuild: {
     loader: 'jsx',
   },
+
+  base: './', // Important pour le déploiement
+
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+  },
+
+  // Gérer les assets
+  assetsInclude: ['**/*.jpg', '**/*.png', '**/*.jpeg', '**/*.gif', '**/*.svg'],
 }));
