@@ -1,14 +1,4 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Mail,
-  Phone,
-  Linkedin,
-  Send,
-  CheckCircle,
-  AlertCircle,
-  Loader,
-} from "lucide-react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -39,18 +29,16 @@ const Contact = () => {
     setSendError(false);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!validate()) return;
 
     setIsLoading(true);
     setSendError(false);
 
     try {
-      // Configuration EmailJS
-      const serviceId = "service_y6770h8"; // À remplacer
-      const templateId = "template_x3ocm2k"; // À remplacer
-      const publicKey = "XzWcGVv7BBmtNKG2d"; // À remplacer
+      const serviceId = "service_y6770h8";
+      const templateId = "template_x3ocm2k";
+      const publicKey = "XzWcGVv7BBmtNKG2d";
 
       const templateParams = {
         from_name: formData.name,
@@ -59,7 +47,6 @@ const Contact = () => {
         to_email: "salifciss222@gmail.com",
       };
 
-      // Envoi via EmailJS
       const response = await fetch(
         "https://api.emailjs.com/api/v1.0/email/send",
         {
@@ -91,300 +78,588 @@ const Contact = () => {
   };
 
   return (
-    <section
-      id="contact"
-      className="relative bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-500 py-20 px-4 flex flex-col items-center justify-center min-h-screen overflow-hidden text-white"
-    >
-      {/* Fond animé */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-1/4 -left-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 -right-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.5, 0.3, 0.5],
-          }}
-          transition={{ duration: 8, repeat: Infinity, delay: 1 }}
-        />
-      </div>
+    <>
+      <style>{`
+        @keyframes scan {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100vh); }
+        }
 
-      {/* En-tête */}
-      <motion.div
-        className="text-center mb-16 relative z-10"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        @keyframes glowPulse {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .scan-line {
+          position: absolute;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #3399ff, transparent);
+          box-shadow: 0 0 20px #3399ff;
+          animation: scan 8s linear infinite;
+          opacity: 0.3;
+          pointer-events: none;
+        }
+
+        .animate-slideIn {
+          animation: slideIn 0.6s ease-out;
+        }
+
+        .spinner {
+          border: 3px solid rgba(51, 153, 255, 0.3);
+          border-top: 3px solid #3399ff;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+
+      <section
+        id="contact"
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #001a2e 0%, #002a3a 50%, #001520 100%)',
+          padding: '5rem 1rem',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          color: 'white'
+        }}
       >
-        <motion.div
-          className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-blue-700/20 rounded-full border border-purple-500/30"
-          whileHover={{ scale: 1.05 }}
-        >
-          <Mail className="w-5 h-5 text-blue-400" />
-          <span className="text-sm font-medium text-blue-300">
-            Restons en contact
-          </span>
-        </motion.div>
+        {/* Scan lines */}
+        <div className="scan-line" />
+        <div className="scan-line" style={{ animationDelay: '4s' }} />
 
-        <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-900 via-blue-400 to-blue-400 bg-clip-text text-transparent">
-          Contactez-moi
-        </h2>
-        <p className="text-xl text-indigo-200 max-w-2xl mx-auto">
-          Une question ? Une opportunité ? Un projet ? N'hésitez pas à me
-          contacter
-        </p>
-      </motion.div>
+        {/* Grille de fond */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={`h-${i}`}
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '1px',
+              top: `${i * 5}%`,
+              left: 0,
+              background: 'rgba(51, 153, 255, 0.05)'
+            }}
+          />
+        ))}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={`v-${i}`}
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '100%',
+              left: `${i * 5}%`,
+              top: 0,
+              background: 'rgba(51, 153, 255, 0.05)'
+            }}
+          />
+        ))}
 
-      {/* Formulaire */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="relative bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl max-w-2xl w-full p-8 md:p-12 border border-white/20 z-10"
-      >
-        <AnimatePresence mode="wait">
+        {/* Header */}
+        <div className="animate-slideIn" style={{
+          textAlign: 'center',
+          marginBottom: '4rem',
+          position: 'relative',
+          zIndex: 10
+        }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '1rem',
+            padding: '0.5rem 1rem',
+            background: 'rgba(0, 0, 0, 0.6)',
+            border: '1px solid #3399ff',
+            borderRadius: '20px',
+            fontFamily: 'monospace',
+            fontSize: '0.875rem',
+            color: '#66b3ff'
+          }}>
+            <span>✉️</span>
+            <span>RESTONS_EN_CONTACT</span>
+          </div>
+
+          <h2 style={{
+            fontSize: 'clamp(2.5rem, 8vw, 4rem)',
+            fontWeight: 900,
+            marginBottom: '1rem',
+            color: '#3399ff',
+            fontFamily: 'monospace',
+            letterSpacing: '0.1em',
+            textShadow: '0 0 30px rgba(51, 153, 255, 0.8)'
+          }}>
+            [ CONTACTEZ-MOI ]
+          </h2>
+
+          <p style={{
+            fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+            color: 'rgba(102, 179, 255, 0.8)',
+            maxWidth: '700px',
+            margin: '0 auto'
+          }}>
+            Une question ? Une opportunité ? Un projet ? N'hésitez pas à me contacter
+          </p>
+        </div>
+
+        {/* Formulaire */}
+        <div className="animate-slideIn" style={{
+          position: 'relative',
+          background: 'rgba(0, 0, 0, 0.6)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '15px',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+          maxWidth: '700px',
+          width: '100%',
+          padding: 'clamp(1.5rem, 5vw, 3rem)',
+          border: '2px solid rgba(51, 153, 255, 0.3)',
+          zIndex: 10,
+          clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))',
+          animationDelay: '0.2s'
+        }}>
           {!submitted ? (
-            <motion.form
-              key="form"
-              onSubmit={handleSubmit}
-              className="space-y-6"
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {/* Nom */}
-              <div className="relative">
-                <label className="block text-sm font-medium text-indigo-200 mb-2">
-                  Nom complet
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  color: '#66b3ff',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'monospace'
+                }}>
+                  {'>'} NOM_COMPLET
                 </label>
-                <motion.input
+                <input
                   type="text"
                   name="name"
                   placeholder="Votre nom"
                   value={formData.name}
                   onChange={handleChange}
-                  whileFocus={{ scale: 1.01 }}
-                  className={`w-full bg-white/5 border ${
-                    errors.name ? "border-red-400" : "border-white/20"
-                  } rounded-xl px-5 py-4 text-white placeholder-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition backdrop-blur-sm`}
+                  style={{
+                    width: '100%',
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    border: `1px solid ${errors.name ? '#ff4444' : 'rgba(51, 153, 255, 0.3)'}`,
+                    borderRadius: '8px',
+                    padding: '1rem 1.25rem',
+                    color: 'white',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'all 0.3s',
+                    fontFamily: 'monospace'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#3399ff';
+                    e.target.style.boxShadow = '0 0 20px rgba(51, 153, 255, 0.3)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = errors.name ? '#ff4444' : 'rgba(51, 153, 255, 0.3)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
-                <AnimatePresence>
-                  {errors.name && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-center gap-1 text-red-400 text-sm mt-2"
-                    >
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.name}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {errors.name && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: '#ff4444',
+                    fontSize: '0.875rem',
+                    marginTop: '0.5rem',
+                    fontFamily: 'monospace'
+                  }}>
+                    <span>⚠️</span>
+                    {errors.name}
+                  </div>
+                )}
               </div>
 
               {/* Email */}
-              <div className="relative">
-                <label className="block text-sm font-medium text-indigo-200 mb-2">
-                  Adresse email
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  color: '#66b3ff',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'monospace'
+                }}>
+                  {'>'} ADRESSE_EMAIL
                 </label>
-                <motion.input
+                <input
                   type="email"
                   name="email"
                   placeholder="votre@email.com"
                   value={formData.email}
                   onChange={handleChange}
-                  whileFocus={{ scale: 1.01 }}
-                  className={`w-full bg-white/5 border ${
-                    errors.email ? "border-red-400" : "border-white/20"
-                  } rounded-xl px-5 py-4 text-white placeholder-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition backdrop-blur-sm`}
+                  style={{
+                    width: '100%',
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    border: `1px solid ${errors.email ? '#ff4444' : 'rgba(51, 153, 255, 0.3)'}`,
+                    borderRadius: '8px',
+                    padding: '1rem 1.25rem',
+                    color: 'white',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'all 0.3s',
+                    fontFamily: 'monospace'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#3399ff';
+                    e.target.style.boxShadow = '0 0 20px rgba(51, 153, 255, 0.3)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = errors.email ? '#ff4444' : 'rgba(51, 153, 255, 0.3)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
-                <AnimatePresence>
-                  {errors.email && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-center gap-1 text-red-400 text-sm mt-2"
-                    >
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.email}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {errors.email && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: '#ff4444',
+                    fontSize: '0.875rem',
+                    marginTop: '0.5rem',
+                    fontFamily: 'monospace'
+                  }}>
+                    <span>⚠️</span>
+                    {errors.email}
+                  </div>
+                )}
               </div>
 
               {/* Message */}
-              <div className="relative">
-                <label className="block text-sm font-medium text-indigo-200 mb-2">
-                  Votre message
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  color: '#66b3ff',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'monospace'
+                }}>
+                  {'>'} VOTRE_MESSAGE
                 </label>
-                <motion.textarea
+                <textarea
                   name="message"
                   rows="5"
                   placeholder="Décrivez votre projet ou votre demande..."
                   value={formData.message}
                   onChange={handleChange}
-                  whileFocus={{ scale: 1.01 }}
-                  className={`w-full bg-white/5 border ${
-                    errors.message ? "border-red-400" : "border-white/20"
-                  } rounded-xl px-5 py-4 text-white placeholder-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none backdrop-blur-sm`}
+                  style={{
+                    width: '100%',
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    border: `1px solid ${errors.message ? '#ff4444' : 'rgba(51, 153, 255, 0.3)'}`,
+                    borderRadius: '8px',
+                    padding: '1rem 1.25rem',
+                    color: 'white',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    transition: 'all 0.3s',
+                    resize: 'none',
+                    fontFamily: 'monospace'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#3399ff';
+                    e.target.style.boxShadow = '0 0 20px rgba(51, 153, 255, 0.3)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = errors.message ? '#ff4444' : 'rgba(51, 153, 255, 0.3)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
-                <div className="flex justify-between items-center mt-2">
-                  <AnimatePresence>
-                    {errors.message && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-1 text-red-400 text-sm"
-                      >
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.message}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  <span className="text-xs text-indigo-300">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+                  {errors.message && (
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      color: '#ff4444',
+                      fontSize: '0.875rem',
+                      fontFamily: 'monospace'
+                    }}>
+                      <span>⚠️</span>
+                      {errors.message}
+                    </div>
+                  )}
+                  <span style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(102, 179, 255, 0.6)',
+                    marginLeft: 'auto',
+                    fontFamily: 'monospace'
+                  }}>
                     {formData.message.length} caractères
                   </span>
                 </div>
               </div>
 
               {/* Erreur d'envoi */}
-              <AnimatePresence>
-                {sendError && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 flex items-start gap-3"
-                  >
-                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-red-200 font-medium">Erreur d'envoi</p>
-                      <p className="text-red-300 text-sm mt-1">
-                        Une erreur s'est produite. Veuillez réessayer ou me
-                        contacter directement par email.
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {sendError && (
+                <div style={{
+                  background: 'rgba(255, 68, 68, 0.2)',
+                  border: '1px solid rgba(255, 68, 68, 0.5)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '0.75rem'
+                }}>
+                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>⚠️</span>
+                  <div>
+                    <p style={{ color: '#ffcccc', fontWeight: 600, marginBottom: '0.25rem' }}>
+                      Erreur d'envoi
+                    </p>
+                    <p style={{ color: '#ffdddd', fontSize: '0.875rem' }}>
+                      Une erreur s'est produite. Veuillez réessayer ou me contacter directement par email.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Bouton Submit */}
-              <motion.button
-                type="submit"
+              <button
+                onClick={handleSubmit}
                 disabled={isLoading}
-                whileHover={{ scale: isLoading ? 1 : 1.02 }}
-                whileTap={{ scale: isLoading ? 1 : 0.98 }}
-                className={`w-full bg-gradient-to-r from-indigo-600 to-blue-400 hover:from-indigo-700 hover:to-blue-400 text-white font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 ${
-                  isLoading ? "opacity-70 cursor-not-allowed" : ""
-                }`}
+                style={{
+                  width: '100%',
+                  background: isLoading ? 'rgba(51, 153, 255, 0.5)' : 'linear-gradient(135deg, #3399ff, #0099cc)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  padding: '1rem',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  fontSize: '1rem',
+                  fontFamily: 'monospace',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))',
+                  opacity: isLoading ? 0.7 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (!isLoading) {
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 10px 40px rgba(51, 153, 255, 0.5)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               >
                 {isLoading ? (
                   <>
-                    <Loader className="w-5 h-5 animate-spin" />
+                    <div className="spinner" />
                     Envoi en cours...
                   </>
                 ) : (
                   <>
-                    <Send className="w-5 h-5" />
+                    <span>📨</span>
                     Envoyer le message
                   </>
                 )}
-              </motion.button>
-            </motion.form>
+              </button>
+            </div>
           ) : (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-12"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6"
-              >
-                <CheckCircle className="w-12 h-12 text-green-400" />
-              </motion.div>
-              <h3 className="text-3xl font-bold mb-4 text-white">
+            <div style={{ textAlign: 'center', padding: '3rem 0' }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                background: 'rgba(0, 204, 102, 0.2)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 1.5rem',
+                fontSize: '3rem',
+                border: '2px solid #00cc66',
+                animation: 'glowPulse 2s ease-in-out infinite'
+              }}>
+                ✓
+              </div>
+              <h3 style={{
+                fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                fontWeight: 'bold',
+                marginBottom: '1rem',
+                color: 'white',
+                fontFamily: 'monospace'
+              }}>
                 Message envoyé !
               </h3>
-              <p className="text-indigo-200 mb-8">
-                Merci pour votre message. Je vous répondrai dans les plus brefs
-                délais.
+              <p style={{
+                color: 'rgba(102, 179, 255, 0.8)',
+                marginBottom: '2rem',
+                fontSize: '1rem'
+              }}>
+                Merci pour votre message. Je vous répondrai dans les plus brefs délais.
               </p>
-              <motion.button
+              <button
                 onClick={() => setSubmitted(false)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition border border-white/20"
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  border: '2px solid rgba(51, 153, 255, 0.5)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  fontFamily: 'monospace',
+                  fontSize: '0.875rem',
+                  textTransform: 'uppercase',
+                  clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(51, 153, 255, 0.2)';
+                  e.currentTarget.style.borderColor = '#3399ff';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
+                  e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.5)';
+                }}
               >
                 Envoyer un autre message
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* Informations de contact */}
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 max-w-4xl w-full relative z-10"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        {[
-          {
-            label: "Email",
-            value: "salifciss222@gmail.com",
-            href: "mailto:salifciss222@gmail.com",
-            icon: <Mail className="w-6 h-6" />,
-            color: "from-blue-500 to-cyan-500",
-          },
-          {
-            label: "Téléphone",
-            value: "+221 77 227 49 87",
-            href: "tel:+221772274987",
-            icon: <Phone className="w-6 h-6" />,
-            color: "from-purple-500 to-pink-500",
-          },
-          {
-            label: "LinkedIn",
-            value: "Salif Ciss",
-            href: "https://www.linkedin.com/in/salif-ciss-672990267",
-            icon: <Linkedin className="w-6 h-6" />,
-            color: "from-blue-500 to-emerald-500",
-          },
-        ].map(({ label, value, href, icon, color }) => (
-          <motion.a
-            key={label}
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ y: -5, scale: 1.02 }}
-            className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center hover:bg-white/15 transition group"
-          >
-            <div
-              className={`w-12 h-12 bg-gradient-to-r ${color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition`}
-            >
-              {icon}
+              </button>
             </div>
-            <h4 className="text-sm font-medium text-indigo-300 mb-1">
-              {label}
-            </h4>
-            <p className="text-white font-semibold">{value}</p>
-          </motion.a>
-        ))}
-      </motion.div>
-    </section>
+          )}
+        </div>
+
+        {/* Informations de contact */}
+        <div className="animate-slideIn" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '1.5rem',
+          marginTop: '4rem',
+          maxWidth: '1000px',
+          width: '100%',
+          position: 'relative',
+          zIndex: 10,
+          animationDelay: '0.4s'
+        }}>
+          {[
+            {
+              label: "Email",
+              value: "salifciss222@gmail.com",
+              href: "mailto:salifciss222@gmail.com",
+              icon: "📧",
+              color: "#3399ff",
+            },
+            {
+              label: "Téléphone",
+              value: "+221 77 227 49 87",
+              href: "tel:+221772274987",
+              icon: "📱",
+              color: "#cc00ff",
+            },
+            {
+              label: "LinkedIn",
+              value: "Salif Ciss",
+              href: "https://www.linkedin.com/in/salif-ciss-672990267",
+              icon: "💼",
+              color: "#00cc66",
+            },
+          ].map(({ label, value, href, icon, color }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: 'rgba(0, 0, 0, 0.6)',
+                backdropFilter: 'blur(20px)',
+                border: '2px solid rgba(51, 153, 255, 0.3)',
+                borderRadius: '15px',
+                padding: '1.5rem',
+                textAlign: 'center',
+                textDecoration: 'none',
+                transition: 'all 0.3s',
+                clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.borderColor = color;
+                e.currentTarget.style.boxShadow = `0 10px 40px ${color}40`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.3)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{
+                width: '50px',
+                height: '50px',
+                background: `${color}30`,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 1rem',
+                fontSize: '1.5rem',
+                border: `2px solid ${color}`,
+                transition: 'all 0.3s'
+              }}>
+                {icon}
+              </div>
+              <h4 style={{
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: '#66b3ff',
+                marginBottom: '0.5rem',
+                fontFamily: 'monospace',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em'
+              }}>
+                {label}
+              </h4>
+              <p style={{
+                color: 'white',
+                fontWeight: 600,
+                fontSize: '0.875rem'
+              }}>
+                {value}
+              </p>
+            </a>
+          ))}
+        </div>
+
+        {/* Effet vignette */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.5) 100%)',
+          pointerEvents: 'none'
+        }} />
+      </section>
+    </>
   );
 };
 

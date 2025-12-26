@@ -1,144 +1,187 @@
 import { useState } from "react";
-import { Zap, Code2, Database, Smartphone, Globe, Server } from "lucide-react";
 
 const skillCategories = [
   {
     category: "Frontend",
-    icon: <Globe className="w-6 h-6" />,
-    color: "from-cyan-500 to-blue-600",
+    icon: "🌐",
+    color: "#3399ff",
     skills: [
-      { name: "React", level: 90, desc: "Développement SPA & Hooks", color: "#61DAFB", yearsExp: "3+" },
-      { name: "Next.js", level: 75, desc: "SSR et static site", color: "#000000", yearsExp: "2+" },
-      { name: "Tailwind CSS", level: 80, desc: "Design rapide & moderne", color: "#38B2AC", yearsExp: "2+" },
-      { name: "JavaScript", level: 85, desc: "ES6+ & DOM API", color: "#F7DF1E", yearsExp: "4+" },
-      
+      { name: "React", level: 90, desc: "Développement SPA & Hooks", yearsExp: "3+" },
+      { name: "Next.js", level: 75, desc: "SSR et static site", yearsExp: "2+" },
+      { name: "Tailwind CSS", level: 80, desc: "Design rapide & moderne", yearsExp: "2+" },
+      { name: "JavaScript", level: 85, desc: "ES6+ & DOM API", yearsExp: "4+" },
     ]
   },
   {
     category: "Backend",
-    icon: <Server className="w-6 h-6" />,
-    color: "from-green-500 to-emerald-600",
+    icon: "⚙️",
+    color: "#00cc66",
     skills: [
-      { name: "Node.js", level: 70, desc: "API REST & GraphQL", color: "#68A063", yearsExp: "2+" },
-      { name: "Django", level: 60, desc: "Framework Python web", color: "#092E20", yearsExp: "1+" },
-      { name: "Java", level: 70, desc: "POO & Architecture", color: "#971132", yearsExp: "2+" },
-      { name: "Spring", level: 70, desc: "Spring Boot & MVC", color: "#30833B", yearsExp: "2+" },
+      { name: "Node.js", level: 70, desc: "API REST & GraphQL", yearsExp: "2+" },
+      { name: "Django", level: 60, desc: "Framework Python web", yearsExp: "1+" },
+      { name: "Java", level: 70, desc: "POO & Architecture", yearsExp: "2+" },
+      { name: "Spring", level: 70, desc: "Spring Boot & MVC", yearsExp: "2+" },
     ]
   },
   {
     category: "Mobile & Cloud",
-    icon: <Smartphone className="w-6 h-6" />,
-    color: "from-purple-500 to-pink-600",
+    icon: "📱",
+    color: "#cc00ff",
     skills: [
-      { name: "Flutter", level: 65, desc: "Apps cross-platform", color: "#02569B", yearsExp: "1+" },
-      { name: "Firebase", level: 70, desc: "Backend as a Service", color: "#FFCA28", yearsExp: "2+" },
+      { name: "Flutter", level: 65, desc: "Apps cross-platform", yearsExp: "1+" },
+      { name: "Firebase", level: 70, desc: "Backend as a Service", yearsExp: "2+" },
     ]
   },
   {
     category: "Fondamentaux",
-    icon: <Code2 className="w-6 h-6" />,
-    color: "from-orange-500 to-red-600",
+    icon: "💻",
+    color: "#ff6600",
     skills: [
-      { name: "HTML", level: 90, desc: "Sémantique & SEO", color: "#E44D26", yearsExp: "5+" },
-      { name: "CSS", level: 85, desc: "Flexbox, Grid, Animations", color: "#2965F1", yearsExp: "5+" },
+      { name: "HTML", level: 90, desc: "Sémantique & SEO", yearsExp: "5+" },
+      { name: "CSS", level: 85, desc: "Flexbox, Grid, Animations", yearsExp: "5+" },
     ]
   }
 ];
 
 const SkillCard = ({ skill, categoryColor }) => {
   const [hovered, setHovered] = useState(false);
-  const radius = 45;
-  const circumference = 2 * Math.PI * radius;
-  const progress = circumference - (skill.level / 100) * circumference;
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/5 hover:border-white/20 transition-all duration-500 hover:scale-105 hover:shadow-2xl"
+      style={{
+        position: 'relative',
+        background: hovered ? 'rgba(51, 153, 255, 0.1)' : 'rgba(0, 0, 0, 0.6)',
+        border: `2px solid ${hovered ? categoryColor : 'rgba(51, 153, 255, 0.3)'}`,
+        padding: '1.5rem',
+        borderRadius: '10px',
+        transition: 'all 0.3s',
+        transform: hovered ? 'translateY(-5px)' : 'translateY(0)',
+        boxShadow: hovered ? `0 10px 40px ${categoryColor}40` : 'none',
+        backdropFilter: 'blur(10px)',
+        clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))'
+      }}
     >
-      {/* Glow Effect on Hover */}
-      <div className={`absolute inset-0 bg-gradient-to-r ${categoryColor} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-500`} />
-      
-      <div className="relative z-10 flex flex-col items-center">
-        {/* Circular Progress */}
-        <div className="relative mb-4">
-          <svg width="100" height="100" className="transform -rotate-90">
-            <defs>
-              <linearGradient id={`gradient-${skill.name}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{ stopColor: skill.color, stopOpacity: 1 }} />
-                <stop offset="100%" style={{ stopColor: skill.color, stopOpacity: 0.6 }} />
-              </linearGradient>
-              <filter id={`glow-${skill.name}`}>
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            
-            {/* Background Circle */}
-            <circle
-              cx="50"
-              cy="50"
-              r={radius}
-              stroke="rgba(255,255,255,0.1)"
-              strokeWidth="8"
-              fill="none"
-            />
-            
-            {/* Progress Circle */}
-            <circle
-              cx="50"
-              cy="50"
-              r={radius}
-              stroke={`url(#gradient-${skill.name})`}
-              strokeWidth="8"
-              fill="none"
-              strokeDasharray={circumference}
-              strokeDashoffset={hovered ? progress : circumference}
-              strokeLinecap="round"
-              className="transition-all duration-1000 ease-out"
-              style={{ filter: hovered ? `url(#glow-${skill.name})` : 'none' }}
-            />
-          </svg>
-          
-          {/* Center Percentage */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-2xl font-bold text-white" style={{ color: hovered ? skill.color : undefined }}>
-              {skill.level}%
-            </span>
-          </div>
-
-          {/* Pulsing Dot */}
-          {hovered && (
-            <div 
-              className="absolute top-1 left-1/2 w-3 h-3 rounded-full animate-pulse"
-              style={{ backgroundColor: skill.color }}
-            />
-          )}
+      {/* Barre de progression */}
+      <div style={{
+        marginBottom: '1rem',
+        position: 'relative'
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '0.5rem'
+        }}>
+          <span style={{
+            color: hovered ? categoryColor : '#3399ff',
+            fontSize: '1.125rem',
+            fontWeight: 'bold',
+            fontFamily: 'monospace',
+            transition: 'color 0.3s'
+          }}>
+            {skill.name}
+          </span>
+          <span style={{
+            color: categoryColor,
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            fontFamily: 'monospace'
+          }}>
+            {skill.level}%
+          </span>
         </div>
 
-        {/* Skill Name */}
-        <h4 
-          className="text-lg font-bold mb-2 transition-colors duration-300"
-          style={{ color: hovered ? skill.color : '#fff' }}
-        >
-          {skill.name}
-        </h4>
-
-        {/* Description */}
-        <p className="text-sm text-gray-400 text-center mb-3 line-clamp-2 group-hover:text-gray-300 transition-colors">
-          {skill.desc}
-        </p>
-
-        {/* Experience Badge */}
-        <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full group-hover:bg-white/10 group-hover:border-white/20 transition-all">
-          <Zap className="w-3 h-3 text-yellow-400" />
-          <span className="text-xs font-semibold text-gray-300">{skill.yearsExp} d'expérience</span>
+        {/* Barre de progression */}
+        <div style={{
+          width: '100%',
+          height: '8px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '4px',
+          overflow: 'hidden',
+          position: 'relative'
+        }}>
+          <div style={{
+            width: hovered ? `${skill.level}%` : '0%',
+            height: '100%',
+            background: `linear-gradient(90deg, ${categoryColor}, ${categoryColor}cc)`,
+            transition: 'width 1s ease-out',
+            boxShadow: `0 0 10px ${categoryColor}`,
+            position: 'relative'
+          }}>
+            {/* Point lumineux à la fin */}
+            {hovered && (
+              <div style={{
+                position: 'absolute',
+                right: 0,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '12px',
+                height: '12px',
+                background: categoryColor,
+                borderRadius: '50%',
+                boxShadow: `0 0 15px ${categoryColor}`,
+                animation: 'pulse 1.5s ease-in-out infinite'
+              }} />
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Description */}
+      <p style={{
+        color: 'rgba(102, 179, 255, 0.8)',
+        fontSize: '0.875rem',
+        marginBottom: '1rem',
+        lineHeight: 1.6,
+        minHeight: '40px'
+      }}>
+        {skill.desc}
+      </p>
+
+      {/* Badge expérience */}
+      <div style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        padding: '0.25rem 0.75rem',
+        background: 'rgba(255, 255, 255, 0.05)',
+        border: `1px solid ${categoryColor}40`,
+        borderRadius: '20px',
+        fontSize: '0.75rem',
+        fontWeight: 'bold',
+        color: categoryColor
+      }}>
+        <span>⚡</span>
+        <span>{skill.yearsExp} exp.</span>
+      </div>
+
+      {/* Effet de coin */}
+      {hovered && (
+        <>
+          <div style={{
+            position: 'absolute',
+            top: '0',
+            right: '0',
+            width: '15px',
+            height: '15px',
+            background: categoryColor,
+            clipPath: 'polygon(100% 0, 0 0, 100% 100%)',
+            boxShadow: `0 0 20px ${categoryColor}`
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '0',
+            left: '0',
+            width: '15px',
+            height: '15px',
+            background: categoryColor,
+            clipPath: 'polygon(0 100%, 100% 100%, 0 0)',
+            boxShadow: `0 0 20px ${categoryColor}`
+          }} />
+        </>
+      )}
     </div>
   );
 };
@@ -151,111 +194,7 @@ const SkillsRadial = () => {
     : skillCategories;
 
   return (
-    <section id="skills" className="relative min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 py-24 px-4 overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full mb-6">
-            <Code2 className="w-4 h-4 text-blue-400" />
-            <span className="text-sm text-gray-300 font-medium">Stack Technique</span>
-          </div>
-          
-          <h2 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-100 mb-4">
-            Compétences
-          </h2>
-          
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Technologies et outils que je maîtrise pour créer des solutions innovantes
-          </p>
-        </div>
-
-        {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
-          <button
-            onClick={() => setSelectedCategory(null)}
-            className={`group flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-              selectedCategory === null
-                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
-                : "bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20 hover:text-white"
-            }`}
-          >
-            <Database className="w-5 h-5" />
-            Toutes les compétences
-          </button>
-          
-          {skillCategories.map((cat, i) => (
-            <button
-              key={i}
-              onClick={() => setSelectedCategory(cat.category)}
-              className={`group flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                selectedCategory === cat.category
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
-                  : "bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20 hover:text-white"
-              }`}
-            >
-              {cat.icon}
-              {cat.category}
-            </button>
-          ))}
-        </div>
-
-        {/* Skills Grid by Category */}
-        <div className="space-y-16">
-          {displayedCategories.map((category, catIndex) => (
-            <div key={catIndex} className="animate-fadeIn">
-              {/* Category Header */}
-              <div className="flex items-center gap-4 mb-8">
-                <div className={`p-3 bg-gradient-to-r ${category.color} rounded-xl`}>
-                  {category.icon}
-                </div>
-                <div>
-                  <h3 className="text-3xl font-bold text-white">{category.category}</h3>
-                  <p className="text-sm text-gray-400">{category.skills.length} compétences</p>
-                </div>
-                <div className={`flex-1 h-1 bg-gradient-to-r ${category.color} opacity-20 rounded-full ml-4`} />
-              </div>
-
-              {/* Skills Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {category.skills.map((skill, skillIndex) => (
-                  <SkillCard 
-                    key={skillIndex} 
-                    skill={skill} 
-                    categoryColor={category.color}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Stats Section */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[
-            { label: "Technologies", value: skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0) },
-            { label: "Projets complétés", value: "50+" },
-            { label: "Heures de code", value: "5000+" },
-            { label: "Clients satisfaits", value: "25+" }
-          ].map((stat, i) => (
-            <div 
-              key={i} 
-              className="group text-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-xl border border-white/5 rounded-2xl hover:border-white/20 transition-all duration-300 hover:scale-105"
-            >
-              <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2 group-hover:scale-110 transition-transform">
-                {stat.value}
-              </div>
-              <div className="text-sm text-gray-400 font-medium">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
+    <>
       <style>{`
         @keyframes fadeIn {
           from {
@@ -267,11 +206,353 @@ const SkillsRadial = () => {
             transform: translateY(0);
           }
         }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+          50% { opacity: 0.5; transform: translateY(-50%) scale(1.2); }
+        }
+
+        @keyframes glowPulse {
+          0%, 100% { 
+            box-shadow: 0 0 20px rgba(51, 153, 255, 0.3);
+          }
+          50% { 
+            box-shadow: 0 0 40px rgba(51, 153, 255, 0.6);
+          }
+        }
+
+        @keyframes scan {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100vh); }
+        }
+
         .animate-fadeIn {
           animation: fadeIn 0.6s ease-out;
         }
+
+        .scan-line {
+          position: absolute;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #3399ff, transparent);
+          box-shadow: 0 0 20px #3399ff;
+          animation: scan 8s linear infinite;
+          opacity: 0.3;
+          pointer-events: none;
+        }
       `}</style>
-    </section>
+
+      <section 
+        id="skills" 
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #001a2e 0%, #002a3a 50%, #001520 100%)',
+          padding: '6rem 1rem',
+          overflow: 'hidden'
+        }}
+      >
+        {/* Lignes de scan */}
+        <div className="scan-line" />
+        <div className="scan-line" style={{ animationDelay: '4s' }} />
+
+        {/* Grille de fond */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={`h-${i}`}
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '1px',
+              top: `${i * 5}%`,
+              left: 0,
+              background: 'rgba(51, 153, 255, 0.05)'
+            }}
+          />
+        ))}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={`v-${i}`}
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '100%',
+              left: `${i * 5}%`,
+              top: 0,
+              background: 'rgba(51, 153, 255, 0.05)'
+            }}
+          />
+        ))}
+
+        <div style={{
+          position: 'relative',
+          zIndex: 10,
+          maxWidth: '1400px',
+          margin: '0 auto'
+        }}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              background: 'rgba(0, 0, 0, 0.6)',
+              border: '1px solid #3399ff',
+              borderRadius: '20px',
+              marginBottom: '1.5rem',
+              fontFamily: 'monospace',
+              fontSize: '0.875rem',
+              color: '#66b3ff'
+            }}>
+              <span>💻</span>
+              <span>STACK_TECHNIQUE</span>
+            </div>
+            
+            <h2 style={{
+              fontSize: 'clamp(2.5rem, 8vw, 4rem)',
+              fontWeight: 900,
+              color: '#3399ff',
+              marginBottom: '1rem',
+              fontFamily: 'monospace',
+              letterSpacing: '0.1em',
+              textShadow: '0 0 20px rgba(51, 153, 255, 0.5)'
+            }}>
+              [ COMPÉTENCES ]
+            </h2>
+            
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+              color: 'rgba(102, 179, 255, 0.8)',
+              maxWidth: '700px',
+              margin: '0 auto'
+            }}>
+              Technologies et outils maîtrisés pour créer des solutions innovantes
+            </p>
+          </div>
+
+          {/* Filtres de catégorie */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '1rem',
+            marginBottom: '4rem'
+          }}>
+            <button
+              onClick={() => setSelectedCategory(null)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem 1.5rem',
+                background: selectedCategory === null 
+                  ? 'linear-gradient(135deg, #3399ff, #0099cc)' 
+                  : 'rgba(0, 0, 0, 0.6)',
+                border: `2px solid ${selectedCategory === null ? '#3399ff' : 'rgba(51, 153, 255, 0.3)'}`,
+                color: 'white',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                fontFamily: 'monospace',
+                fontSize: '0.875rem',
+                textTransform: 'uppercase',
+                clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== null) {
+                  e.currentTarget.style.background = 'rgba(51, 153, 255, 0.2)';
+                  e.currentTarget.style.borderColor = '#3399ff';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== null) {
+                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
+                  e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.3)';
+                }
+              }}
+            >
+              <span>📊</span>
+              Toutes
+            </button>
+            
+            {skillCategories.map((cat, i) => (
+              <button
+                key={i}
+                onClick={() => setSelectedCategory(cat.category)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.75rem 1.5rem',
+                  background: selectedCategory === cat.category 
+                    ? 'linear-gradient(135deg, #3399ff, #0099cc)' 
+                    : 'rgba(0, 0, 0, 0.6)',
+                  border: `2px solid ${selectedCategory === cat.category ? '#3399ff' : 'rgba(51, 153, 255, 0.3)'}`,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  fontFamily: 'monospace',
+                  fontSize: '0.875rem',
+                  textTransform: 'uppercase',
+                  clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedCategory !== cat.category) {
+                    e.currentTarget.style.background = 'rgba(51, 153, 255, 0.2)';
+                    e.currentTarget.style.borderColor = '#3399ff';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCategory !== cat.category) {
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
+                    e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.3)';
+                  }
+                }}
+              >
+                <span>{cat.icon}</span>
+                {cat.category}
+              </button>
+            ))}
+          </div>
+
+          {/* Grilles de compétences par catégorie */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
+            {displayedCategories.map((category, catIndex) => (
+              <div key={catIndex} className="animate-fadeIn">
+                {/* En-tête de catégorie */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  marginBottom: '2rem'
+                }}>
+                  <div style={{
+                    padding: '0.75rem',
+                    background: `linear-gradient(135deg, ${category.color}, ${category.color}cc)`,
+                    borderRadius: '10px',
+                    fontSize: '1.5rem',
+                    boxShadow: `0 0 20px ${category.color}40`
+                  }}>
+                    {category.icon}
+                  </div>
+                  <div>
+                    <h3 style={{
+                      fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      fontFamily: 'monospace',
+                      marginBottom: '0.25rem'
+                    }}>
+                      {category.category}
+                    </h3>
+                    <p style={{
+                      fontSize: '0.875rem',
+                      color: 'rgba(102, 179, 255, 0.6)'
+                    }}>
+                      {category.skills.length} compétences
+                    </p>
+                  </div>
+                  <div style={{
+                    flex: 1,
+                    height: '2px',
+                    background: `linear-gradient(90deg, ${category.color}, transparent)`,
+                    marginLeft: '1rem',
+                    opacity: 0.3
+                  }} />
+                </div>
+
+                {/* Grille des compétences */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gap: '1.5rem'
+                }}>
+                  {category.skills.map((skill, skillIndex) => (
+                    <SkillCard 
+                      key={skillIndex} 
+                      skill={skill} 
+                      categoryColor={category.color}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Section statistiques */}
+          <div style={{
+            marginTop: '5rem',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1.5rem'
+          }}>
+            {[
+              { label: "Technologies", value: skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0) },
+              { label: "Projets complétés", value: "50+" },
+              { label: "Heures de code", value: "5000+" },
+              { label: "Clients satisfaits", value: "25+" }
+            ].map((stat, i) => (
+              <div 
+                key={i} 
+                style={{
+                  textAlign: 'center',
+                  padding: '2rem 1rem',
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  border: '2px solid rgba(51, 153, 255, 0.3)',
+                  borderRadius: '10px',
+                  backdropFilter: 'blur(10px)',
+                  transition: 'all 0.3s',
+                  cursor: 'pointer',
+                  clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.borderColor = '#3399ff';
+                  e.currentTarget.style.boxShadow = '0 10px 40px rgba(51, 153, 255, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.3)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{
+                  fontSize: 'clamp(2rem, 5vw, 3rem)',
+                  fontWeight: 900,
+                  color: '#3399ff',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'monospace',
+                  textShadow: '0 0 20px rgba(51, 153, 255, 0.5)'
+                }}>
+                  {stat.value}
+                </div>
+                <div style={{
+                  fontSize: '0.875rem',
+                  color: 'rgba(102, 179, 255, 0.8)',
+                  fontWeight: 500,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em'
+                }}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Effet vignette */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.5) 100%)',
+          pointerEvents: 'none'
+        }} />
+      </section>
+    </>
   );
 };
 

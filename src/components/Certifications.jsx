@@ -86,7 +86,7 @@ const CertificationsSlider = () => {
   return (
     <section
       id="certifications"
-      className="relative min-h-screen py-20 bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-500 text-white overflow-hidden"
+      className="relative min-h-screen py-20 bg-gradient-to-br from-[#001a2e] via-[#002a3a] to-[#001520] text-white overflow-hidden"
     >
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

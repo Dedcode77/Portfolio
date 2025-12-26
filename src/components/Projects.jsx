@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ArrowRight, Github, Globe, ChevronDown, Sparkles, Rocket } from "lucide-react";
 
 const allProjects = [
   {
@@ -7,9 +6,7 @@ const allProjects = [
     description: "Plateforme IA pour la gestion prédictive des absences, notes et performances avec analyse en temps réel.",
     image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80",
     stack: ["React", "Django", "Tailwind CSS"],
-    color: "bg-blue-500",
-    textColor: "text-blue-400",
-    borderColor: "border-blue-500/30",
+    color: "#3399ff",
     demo: "#",
     code: "#",
     impact: "2500+ étudiants",
@@ -20,9 +17,7 @@ const allProjects = [
     description: "Générateur intelligent de formulaires avec validation automatique et analyse des réponses par IA.",
     image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
     stack: ["React", "Firebase"],
-    color: "bg-purple-500",
-    textColor: "text-purple-400",
-    borderColor: "border-purple-500/30",
+    color: "#cc00ff",
     demo: "#",
     code: "#",
     impact: "50k formulaires/mois",
@@ -33,9 +28,7 @@ const allProjects = [
     description: "Expérience d'apprentissage 3D avec avatars personnalisables, suivi en temps réel et évaluation automatique.",
     image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
     stack: ["React", "Firebase"],
-    color: "bg-emerald-500",
-    textColor: "text-emerald-400",
-    borderColor: "border-emerald-500/30",
+    color: "#00cc66",
     demo: "#",
     code: "#",
     impact: "10k utilisateurs actifs",
@@ -46,9 +39,7 @@ const allProjects = [
     description: "Espace de travail collaboratif avec visioconférence intégrée et tableau blanc interactif.",
     image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80",
     stack: ["React", "Firebase"],
-    color: "bg-orange-500",
-    textColor: "text-orange-400",
-    borderColor: "border-orange-500/30",
+    color: "#ff6600",
     demo: "#",
     code: "#",
     impact: "300+ équipes",
@@ -59,9 +50,7 @@ const allProjects = [
     description: "App Flutter avec commandes vocales IA pour gérer les tâches éducatives à distance et planification intelligente.",
     image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80",
     stack: ["Flutter", "Firebase"],
-    color: "bg-pink-500",
-    textColor: "text-pink-400",
-    borderColor: "border-pink-500/30",
+    color: "#ff0099",
     demo: "#",
     code: "#",
     impact: "4.8★ sur stores",
@@ -72,9 +61,7 @@ const allProjects = [
     description: "Tableau de bord avancé avec visualisations interactives et prédictions ML pour insights éducatifs.",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
     stack: ["React", "Django", "Tailwind CSS"],
-    color: "bg-amber-500",
-    textColor: "text-amber-400",
-    borderColor: "border-amber-500/30",
+    color: "#ffaa00",
     demo: "#",
     code: "#",
     impact: "1M+ data points",
@@ -94,205 +81,614 @@ const Projects = () => {
     : allProjects.filter(project => project.stack.includes(selectedStack));
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 py-20 px-4">
-      {/* Floating Orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }} />
-      </div>
+    <>
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
 
-      <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Hero Header */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-white/10 rounded-full mb-8 backdrop-blur-sm">
-            <Rocket className="w-4 h-4 text-blue-400 animate-bounce" />
-            <span className="text-sm font-medium bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Innovations & Créations
-            </span>
+        @keyframes scan {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100vh); }
+        }
+
+        @keyframes glowPulse {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.6s ease-out;
+        }
+
+        .scan-line {
+          position: absolute;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #3399ff, transparent);
+          box-shadow: 0 0 20px #3399ff;
+          animation: scan 8s linear infinite;
+          opacity: 0.3;
+          pointer-events: none;
+        }
+      `}</style>
+
+      <section 
+        id="projects"
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #001a2e 0%, #002a3a 50%, #001520 100%)',
+          padding: '5rem 1rem',
+          overflow: 'hidden'
+        }}
+      >
+        {/* Scan lines */}
+        <div className="scan-line" />
+        <div className="scan-line" style={{ animationDelay: '4s' }} />
+
+        {/* Grille de fond */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={`h-${i}`}
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '1px',
+              top: `${i * 5}%`,
+              left: 0,
+              background: 'rgba(51, 153, 255, 0.05)'
+            }}
+          />
+        ))}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={`v-${i}`}
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '100%',
+              left: `${i * 5}%`,
+              top: 0,
+              background: 'rgba(51, 153, 255, 0.05)'
+            }}
+          />
+        ))}
+
+        <div style={{
+          position: 'relative',
+          zIndex: 10,
+          maxWidth: '1400px',
+          margin: '0 auto'
+        }}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              background: 'rgba(0, 0, 0, 0.6)',
+              border: '1px solid #3399ff',
+              borderRadius: '20px',
+              marginBottom: '1.5rem',
+              fontFamily: 'monospace',
+              fontSize: '0.875rem',
+              color: '#66b3ff'
+            }}>
+              <span>🚀</span>
+              <span>INNOVATIONS_&_CRÉATIONS</span>
+            </div>
+            
+            <h1 style={{
+              fontSize: 'clamp(2.5rem, 8vw, 5rem)',
+              fontWeight: 900,
+              marginBottom: '1.5rem',
+              lineHeight: 1.1,
+              fontFamily: 'monospace'
+            }}>
+              <span style={{
+                display: 'block',
+                color: 'white',
+                textShadow: '0 0 20px rgba(255, 255, 255, 0.3)'
+              }}>
+                PORTFOLIO
+              </span>
+              <span style={{
+                display: 'block',
+                color: '#3399ff',
+                textShadow: '0 0 30px rgba(51, 153, 255, 0.8)',
+                letterSpacing: '0.1em'
+              }}>
+                [ CRÉATIF ]
+              </span>
+            </h1>
+            
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+              color: 'rgba(102, 179, 255, 0.8)',
+              maxWidth: '700px',
+              margin: '0 auto'
+            }}>
+              Découvrez mes projets qui repoussent les limites de la technologie
+            </p>
           </div>
-          
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-none">
-            <span className="inline-block bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-              Portfolio
-            </span>
-            <br />
-            <span className="inline-block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Créatif
-            </span>
-          </h1>
-          
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Découvrez mes projets qui repoussent les limites de la technologie
-          </p>
-        </div>
 
-        {/* Filter Pills */}
-        <div className="flex justify-center flex-wrap gap-3 mb-16">
-          {stacks.map((stack) => (
-            <button
-              key={stack}
-              onClick={() => setSelectedStack(stack)}
-              className={`group relative px-6 py-3 rounded-full font-semibold overflow-hidden transition-all duration-300 ${
-                selectedStack === stack
-                  ? "text-white scale-105"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              {selectedStack === stack && (
-                <>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 blur-xl opacity-50" />
-                </>
-              )}
-              {selectedStack !== stack && (
-                <div className="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors" />
-              )}
-              <span className="relative z-10">{stack}</span>
-            </button>
-          ))}
-        </div>
+          {/* Filtres */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+            marginBottom: '4rem'
+          }}>
+            {stacks.map((stack) => (
+              <button
+                key={stack}
+                onClick={() => setSelectedStack(stack)}
+                style={{
+                  position: 'relative',
+                  padding: '0.75rem 1.5rem',
+                  background: selectedStack === stack 
+                    ? 'linear-gradient(135deg, #3399ff, #0099cc)' 
+                    : 'rgba(0, 0, 0, 0.6)',
+                  border: `2px solid ${selectedStack === stack ? '#3399ff' : 'rgba(51, 153, 255, 0.3)'}`,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  borderRadius: '25px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  fontFamily: 'monospace',
+                  fontSize: '0.875rem',
+                  textTransform: 'uppercase',
+                  transform: selectedStack === stack ? 'scale(1.05)' : 'scale(1)',
+                  boxShadow: selectedStack === stack ? '0 0 30px rgba(51, 153, 255, 0.5)' : 'none'
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedStack !== stack) {
+                    e.currentTarget.style.background = 'rgba(51, 153, 255, 0.2)';
+                    e.currentTarget.style.borderColor = '#3399ff';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedStack !== stack) {
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
+                    e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.3)';
+                  }
+                }}
+              >
+                {stack}
+              </button>
+            ))}
+          </div>
 
-        {/* Projects Showcase */}
-        <div className="space-y-8">
-          {filteredProjects.map((project, index) => (
-            <div
-              key={index}
-              onMouseEnter={() => setHoveredCard(index)}
-              onMouseLeave={() => setHoveredCard(null)}
-              className="group relative"
-            >
-              <div className={`relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl overflow-hidden border transition-all duration-500 ${
-                hoveredCard === index ? `${project.borderColor} shadow-2xl` : 'border-white/5'
-              }`}>
-                <div className="grid md:grid-cols-2 gap-0">
-                  {/* Image Side */}
-                  <div className="relative h-80 md:h-auto overflow-hidden">
+          {/* Projets */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            {filteredProjects.map((project, index) => (
+              <div
+                key={index}
+                className="animate-fadeIn"
+                onMouseEnter={() => setHoveredCard(index)}
+                onMouseLeave={() => setHoveredCard(null)}
+                style={{
+                  position: 'relative',
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  border: `2px solid ${hoveredCard === index ? project.color : 'rgba(51, 153, 255, 0.3)'}`,
+                  borderRadius: '15px',
+                  overflow: 'hidden',
+                  transition: 'all 0.5s',
+                  transform: hoveredCard === index ? 'translateY(-5px)' : 'translateY(0)',
+                  boxShadow: hoveredCard === index ? `0 20px 60px ${project.color}40` : 'none',
+                  clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))'
+                }}
+              >
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: window.innerWidth >= 768 ? '1fr 1fr' : '1fr',
+                  gap: 0
+                }}>
+                  {/* Image */}
+                  <div style={{
+                    position: 'relative',
+                    height: '320px',
+                    overflow: 'hidden'
+                  }}>
                     <img
                       src={project.image}
                       alt={project.title}
-                      className={`w-full h-full object-cover transition-all duration-700 ${
-                        hoveredCard === index ? 'scale-110 brightness-110' : 'scale-100 brightness-75'
-                      }`}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.7s, filter 0.7s',
+                        transform: hoveredCard === index ? 'scale(1.1)' : 'scale(1)',
+                        filter: hoveredCard === index ? 'brightness(1.1)' : 'brightness(0.7)'
+                      }}
                     />
                     
-                    {/* Gradient Overlay */}
-                    <div className={`absolute inset-0 ${project.color} opacity-20 mix-blend-multiply`} />
-                    <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/50 to-transparent" />
-                    
-                    {/* Status Badge */}
-                    <div className="absolute top-6 left-6">
-                      <div className="flex items-center gap-2 px-4 py-2 bg-black/50 backdrop-blur-md border border-white/20 rounded-full">
-                        <div className={`w-2 h-2 ${project.color} rounded-full animate-pulse`} />
-                        <span className="text-xs font-semibold text-white">{project.status}</span>
-                      </div>
+                    {/* Overlay gradient */}
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: `linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, transparent 100%)`,
+                      mixBlendMode: 'multiply'
+                    }} />
+
+                    {/* Badge statut */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '1.5rem',
+                      left: '1.5rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.5rem 1rem',
+                      background: 'rgba(0, 0, 0, 0.8)',
+                      border: `1px solid ${project.color}`,
+                      borderRadius: '20px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <div style={{
+                        width: '8px',
+                        height: '8px',
+                        background: project.color,
+                        borderRadius: '50%',
+                        animation: 'glowPulse 2s ease-in-out infinite',
+                        boxShadow: `0 0 10px ${project.color}`
+                      }} />
+                      <span style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        fontFamily: 'monospace'
+                      }}>
+                        {project.status}
+                      </span>
                     </div>
 
-                    {/* Impact Badge */}
-                    <div className="absolute bottom-6 left-6">
-                      <div className="px-4 py-2 bg-black/50 backdrop-blur-md border border-white/20 rounded-full">
-                        <span className="text-sm font-semibold text-white">{project.impact}</span>
-                      </div>
+                    {/* Badge impact */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '1.5rem',
+                      left: '1.5rem',
+                      padding: '0.5rem 1rem',
+                      background: 'rgba(0, 0, 0, 0.8)',
+                      border: '1px solid rgba(51, 153, 255, 0.5)',
+                      borderRadius: '20px',
+                      backdropFilter: 'blur(10px)'
+                    }}>
+                      <span style={{
+                        fontSize: '0.875rem',
+                        fontWeight: 'bold',
+                        color: '#3399ff',
+                        fontFamily: 'monospace'
+                      }}>
+                        {project.impact}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Content Side */}
-                  <div className="p-8 md:p-12 flex flex-col justify-center">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-1 h-8 ${project.color} rounded-full`} />
-                      <span className={`text-sm font-bold uppercase tracking-wider ${project.textColor}`}>
+                  {/* Contenu */}
+                  <div style={{
+                    padding: 'clamp(1.5rem, 5vw, 3rem)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
+                  }}>
+                    {/* Numéro projet */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      marginBottom: '1rem'
+                    }}>
+                      <div style={{
+                        width: '3px',
+                        height: '30px',
+                        background: project.color,
+                        borderRadius: '2px',
+                        boxShadow: `0 0 10px ${project.color}`
+                      }} />
+                      <span style={{
+                        fontSize: '0.875rem',
+                        fontWeight: 'bold',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.15em',
+                        color: project.color,
+                        fontFamily: 'monospace'
+                      }}>
                         Projet #{String(index + 1).padStart(2, '0')}
                       </span>
                     </div>
 
-                    <h3 className="text-4xl font-black text-white mb-4 leading-tight">
+                    {/* Titre */}
+                    <h3 style={{
+                      fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+                      fontWeight: 900,
+                      color: 'white',
+                      marginBottom: '1rem',
+                      lineHeight: 1.2,
+                      fontFamily: 'monospace'
+                    }}>
                       {project.title}
                     </h3>
 
-                    <p className={`text-gray-400 text-lg leading-relaxed mb-6 ${
-                      expandedCard === index ? '' : 'line-clamp-3'
-                    }`}>
+                    {/* Description */}
+                    <p style={{
+                      color: 'rgba(102, 179, 255, 0.8)',
+                      fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
+                      lineHeight: 1.7,
+                      marginBottom: '1.5rem',
+                      overflow: 'hidden',
+                      display: expandedCard === index ? 'block' : '-webkit-box',
+                      WebkitLineClamp: expandedCard === index ? 'unset' : '3',
+                      WebkitBoxOrient: 'vertical'
+                    }}>
                       {project.description}
                     </p>
 
+                    {/* Bouton voir plus */}
                     {project.description.length > 100 && (
                       <button
                         onClick={() => setExpandedCard(expandedCard === index ? null : index)}
-                        className="flex items-center gap-2 text-sm font-semibold text-gray-400 hover:text-white transition-colors mb-6"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          fontSize: '0.875rem',
+                          fontWeight: 'bold',
+                          color: 'rgba(102, 179, 255, 0.8)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          marginBottom: '1.5rem',
+                          padding: 0,
+                          fontFamily: 'monospace',
+                          transition: 'color 0.3s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = '#3399ff'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(102, 179, 255, 0.8)'}
                       >
                         {expandedCard === index ? 'Voir moins' : 'Voir plus'}
-                        <ChevronDown className={`w-4 h-4 transition-transform ${expandedCard === index ? 'rotate-180' : ''}`} />
+                        <span style={{
+                          display: 'inline-block',
+                          transform: expandedCard === index ? 'rotate(180deg)' : 'rotate(0)',
+                          transition: 'transform 0.3s'
+                        }}>▼</span>
                       </button>
                     )}
 
-                    {/* Tech Stack */}
-                    <div className="flex flex-wrap gap-2 mb-8">
+                    {/* Stack technique */}
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '0.5rem',
+                      marginBottom: '2rem'
+                    }}>
                       {project.stack.map((tech, i) => (
                         <span
                           key={i}
-                          className={`px-4 py-2 bg-white/5 border ${project.borderColor} rounded-xl text-sm font-medium ${project.textColor} backdrop-blur-sm`}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            background: 'rgba(0, 0, 0, 0.6)',
+                            border: `1px solid ${project.color}40`,
+                            borderRadius: '8px',
+                            fontSize: '0.875rem',
+                            fontWeight: 600,
+                            color: project.color,
+                            fontFamily: 'monospace'
+                          }}
                         >
                           {tech}
                         </span>
                       ))}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-4">
+                    {/* Boutons d'action */}
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '1rem'
+                    }}>
                       <a
                         href={project.demo}
-                        className={`group/btn flex items-center gap-2 px-6 py-3 ${project.color} rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-current/50 transition-all hover:scale-105`}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          padding: '0.75rem 1.5rem',
+                          background: `linear-gradient(135deg, ${project.color}, ${project.color}cc)`,
+                          color: 'white',
+                          fontWeight: 'bold',
+                          borderRadius: '8px',
+                          textDecoration: 'none',
+                          transition: 'all 0.3s',
+                          fontFamily: 'monospace',
+                          fontSize: '0.875rem',
+                          clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.05)';
+                          e.currentTarget.style.boxShadow = `0 10px 30px ${project.color}60`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
                       >
-                        <Globe className="w-5 h-5" />
+                        <span>🌐</span>
                         Voir la démo
-                        <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                        <span>→</span>
                       </a>
+
                       <a
                         href={project.code}
-                        className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-xl font-semibold text-white hover:bg-white/10 hover:border-white/20 transition-all hover:scale-105"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          padding: '0.75rem 1.5rem',
+                          background: 'rgba(0, 0, 0, 0.6)',
+                          border: '2px solid rgba(51, 153, 255, 0.5)',
+                          color: 'white',
+                          fontWeight: 'bold',
+                          borderRadius: '8px',
+                          textDecoration: 'none',
+                          transition: 'all 0.3s',
+                          fontFamily: 'monospace',
+                          fontSize: '0.875rem',
+                          clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(51, 153, 255, 0.2)';
+                          e.currentTarget.style.borderColor = '#3399ff';
+                          e.currentTarget.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
+                          e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.5)';
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
                       >
-                        <Github className="w-5 h-5" />
+                        <span>💻</span>
                         Code source
                       </a>
                     </div>
                   </div>
                 </div>
 
-                {/* Hover Glow Effect */}
+                {/* Effet glow au hover */}
                 {hoveredCard === index && (
-                  <div className={`absolute inset-0 ${project.color} opacity-5 pointer-events-none`} />
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: `${project.color}10`,
+                    pointerEvents: 'none'
+                  }} />
                 )}
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {filteredProjects.length === 0 && (
-          <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/5 border border-white/10 rounded-full mb-6">
-              <Sparkles className="w-10 h-10 text-gray-500" />
-            </div>
-            <h3 className="text-3xl font-bold text-white mb-3">Aucun projet trouvé</h3>
-            <p className="text-gray-400 text-lg">Essayez un autre filtre pour découvrir plus de projets</p>
+            ))}
           </div>
-        )}
 
-        {/* Bottom CTA */}
-        <div className="mt-20 text-center">
-          <div className="inline-block p-8 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-white/10 rounded-3xl backdrop-blur-sm">
-            <h3 className="text-3xl font-bold text-white mb-3">Intéressé par une collaboration ?</h3>
-            <p className="text-gray-400 mb-6">Créons ensemble quelque chose d'extraordinaire</p>
-            <button className="group px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full font-bold text-white hover:shadow-2xl hover:shadow-purple-500/50 transition-all hover:scale-105">
-              <span className="flex items-center gap-2">
+          {/* État vide */}
+          {filteredProjects.length === 0 && (
+            <div style={{
+              textAlign: 'center',
+              padding: '5rem 1rem'
+            }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '80px',
+                height: '80px',
+                background: 'rgba(0, 0, 0, 0.6)',
+                border: '2px solid rgba(51, 153, 255, 0.3)',
+                borderRadius: '50%',
+                marginBottom: '1.5rem',
+                fontSize: '2rem'
+              }}>
+                ✨
+              </div>
+              <h3 style={{
+                fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                fontWeight: 'bold',
+                color: 'white',
+                marginBottom: '0.75rem',
+                fontFamily: 'monospace'
+              }}>
+                Aucun projet trouvé
+              </h3>
+              <p style={{
+                fontSize: '1.125rem',
+                color: 'rgba(102, 179, 255, 0.8)'
+              }}>
+                Essayez un autre filtre pour découvrir plus de projets
+              </p>
+            </div>
+          )}
+
+          {/* CTA final */}
+          <div style={{
+            marginTop: '5rem',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              display: 'inline-block',
+              padding: '2rem',
+              background: 'rgba(0, 0, 0, 0.6)',
+              border: '2px solid #3399ff',
+              borderRadius: '20px',
+              backdropFilter: 'blur(10px)',
+              clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))'
+            }}>
+              <h3 style={{
+                fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                fontWeight: 'bold',
+                color: 'white',
+                marginBottom: '0.75rem',
+                fontFamily: 'monospace'
+              }}>
+                Intéressé par une collaboration ?
+              </h3>
+              <p style={{
+                color: 'rgba(102, 179, 255, 0.8)',
+                marginBottom: '1.5rem',
+                fontSize: '1.125rem'
+              }}>
+                Créons ensemble quelque chose d'extraordinaire
+              </p>
+              <button
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '1rem 2rem',
+                  background: 'linear-gradient(135deg, #3399ff, #0099cc)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  borderRadius: '25px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  fontFamily: 'monospace',
+                  fontSize: '1rem',
+                  textTransform: 'uppercase',
+                  boxShadow: '0 0 30px rgba(51, 153, 255, 0.5)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 0 50px rgba(51, 153, 255, 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(51, 153, 255, 0.5)';
+                }}
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              >
                 Contactez-moi
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
+                <span>→</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+
+        {/* Effet vignette */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.5) 100%)',
+          pointerEvents: 'none'
+        }} />
+      </section>
+    </>
   );
 };
 

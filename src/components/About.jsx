@@ -1,264 +1,208 @@
-import React, { useRef, useState, useEffect, useMemo, useCallback } from "react";
-import * as THREE from "three";
+import React, { useState, useEffect, useCallback } from "react";
 
-// Composant Canvas 3D avec effet holographique
-const HolographicCube = () => {
-  const containerRef = useRef(null);
-  const sceneRef = useRef(null);
-  const cubeGroupRef = useRef(null);
-  const rendererRef = useRef(null);
-  const animationIdRef = useRef(null);
+// Composant Image avec effets holographiques
+const HolographicImage = ({ imageSrc }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const mouseRef = useRef({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [imageError, setImageError] = useState(false);
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x000000, 10, 50);
-    sceneRef.current = scene;
-    
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    camera.position.set(0, 0, 8);
-
-    const renderer = new THREE.WebGLRenderer({ 
-      alpha: true, 
-      antialias: true,
-      powerPreference: "high-performance"
-    });
-    rendererRef.current = renderer;
-    renderer.setSize(400, 400);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    containerRef.current.appendChild(renderer.domElement);
-
-    const cubeGroup = new THREE.Group();
-    cubeGroupRef.current = cubeGroup;
-    scene.add(cubeGroup);
-
-    const ambientLight = new THREE.AmbientLight(0x00ffff, 0.4);
-    scene.add(ambientLight);
-
-    const pointLight1 = new THREE.PointLight(0xff00ff, 2, 20);
-    pointLight1.position.set(3, 3, 3);
-    scene.add(pointLight1);
-
-    const pointLight2 = new THREE.PointLight(0x00ffff, 2, 20);
-    pointLight2.position.set(-3, -3, 3);
-    scene.add(pointLight2);
-
-    const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
-    const material = new THREE.MeshPhysicalMaterial({
-      color: 0x4169e1,
-      metalness: 0.9,
-      roughness: 0.05,
-      transparent: true,
-      opacity: 0.7,
-      envMapIntensity: 1,
-      clearcoat: 1,
-      clearcoatRoughness: 0.1,
-      reflectivity: 1
-    });
-    
-    const cube = new THREE.Mesh(geometry, material);
-    cubeGroup.add(cube);
-
-    const wireframeGeo = new THREE.EdgesGeometry(geometry);
-    const wireframeMat = new THREE.LineBasicMaterial({ 
-      color: 0x00ffff,
-      linewidth: 2,
-      transparent: true,
-      opacity: 0.8
-    });
-    const wireframe = new THREE.LineSegments(wireframeGeo, wireframeMat);
-    wireframe.scale.setScalar(1.02);
-    cubeGroup.add(wireframe);
-
-    const innerGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
-    const innerMat = new THREE.MeshBasicMaterial({
-      color: 0xff00ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.5
-    });
-    const innerCube = new THREE.Mesh(innerGeo, innerMat);
-    cubeGroup.add(innerCube);
-
-    const sphereGeo = new THREE.SphereGeometry(0.15, 16, 16);
-    const spheres = [];
-    const colors = [0xff00ff, 0x00ffff, 0xff00aa, 0x00aaff];
-    
-    for (let i = 0; i < 4; i++) {
-      const sphereMat = new THREE.MeshBasicMaterial({
-        color: colors[i],
-        transparent: true,
-        opacity: 0.9
-      });
-      const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-      spheres.push(sphere);
-      cubeGroup.add(sphere);
-    }
-
-    const gridHelper = new THREE.GridHelper(20, 20, 0x00ffff, 0xff00ff);
-    gridHelper.position.y = -3;
-    gridHelper.material.transparent = true;
-    gridHelper.material.opacity = 0.3;
-    scene.add(gridHelper);
-
-    const particleCount = 100;
-    const particleGeo = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const colors_arr = new Float32Array(particleCount * 3);
-    
-    for (let i = 0; i < particleCount; i++) {
-      const radius = 4 + Math.random() * 3;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.random() * Math.PI;
-      
-      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = radius * Math.cos(phi);
-      
-      const color = Math.random() > 0.5 ? new THREE.Color(0xff00ff) : new THREE.Color(0x00ffff);
-      colors_arr[i * 3] = color.r;
-      colors_arr[i * 3 + 1] = color.g;
-      colors_arr[i * 3 + 2] = color.b;
-    }
-    
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particleGeo.setAttribute('color', new THREE.BufferAttribute(colors_arr, 3));
-    
-    const particleMat = new THREE.PointsMaterial({
-      size: 0.08,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending
-    });
-    
-    const particles = new THREE.Points(particleGeo, particleMat);
-    scene.add(particles);
-
-    const clock = new THREE.Clock();
-
-    const animate = () => {
-      animationIdRef.current = requestAnimationFrame(animate);
-      const time = clock.getElapsedTime();
-
-      if (isHovered) {
-        const targetRotationY = mouseRef.current.x * 0.5;
-        const targetRotationX = mouseRef.current.y * 0.5;
-        cubeGroup.rotation.y += (targetRotationY - cubeGroup.rotation.y) * 0.1;
-        cubeGroup.rotation.x += (targetRotationX - cubeGroup.rotation.x) * 0.1;
-      } else {
-        cubeGroup.rotation.y += 0.01;
-        cubeGroup.rotation.x = Math.sin(time * 0.3) * 0.1;
-      }
-
-      innerCube.rotation.x = time * 1.5;
-      innerCube.rotation.y = time * 2;
-      innerCube.rotation.z = time * 1.2;
-
-      wireframe.rotation.x = -time * 0.5;
-      wireframe.rotation.y = -time * 0.3;
-
-      spheres.forEach((sphere, i) => {
-        const angle = time + (i * Math.PI * 0.5);
-        const radius = 3;
-        sphere.position.x = Math.cos(angle) * radius;
-        sphere.position.y = Math.sin(angle * 2) * radius * 0.5;
-        sphere.position.z = Math.sin(angle) * radius;
-        
-        const scale = 1 + Math.sin(time * 3 + i) * 0.3;
-        sphere.scale.setScalar(scale);
-      });
-
-      particles.rotation.y = time * 0.05;
-      const positionsAttr = particleGeo.attributes.position;
-      for (let i = 0; i < particleCount; i++) {
-        const i3 = i * 3;
-        positionsAttr.array[i3 + 1] += Math.sin(time + i * 0.1) * 0.002;
-      }
-      positionsAttr.needsUpdate = true;
-
-      if (isHovered) {
-        material.opacity = 0.9;
-        wireframeMat.opacity = 1;
-        cube.scale.setScalar(1 + Math.sin(time * 4) * 0.03);
-      } else {
-        material.opacity += (0.7 - material.opacity) * 0.1;
-        wireframeMat.opacity += (0.8 - wireframeMat.opacity) * 0.1;
-        cube.scale.setScalar(cube.scale.x + (1 - cube.scale.x) * 0.1);
-      }
-
-      pointLight1.intensity = 2 + Math.sin(time * 2) * 0.5;
-      pointLight2.intensity = 2 + Math.cos(time * 2) * 0.5;
-
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    const handleMouseMove = (e) => {
-      const rect = containerRef.current.getBoundingClientRect();
-      mouseRef.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouseRef.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-    };
-
-    const container = containerRef.current;
-    container.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      if (animationIdRef.current) {
-        cancelAnimationFrame(animationIdRef.current);
-      }
-      container.removeEventListener('mousemove', handleMouseMove);
-      if (container && renderer.domElement) {
-        container.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
-      geometry.dispose();
-      material.dispose();
-      wireframeGeo.dispose();
-      wireframeMat.dispose();
-      innerGeo.dispose();
-      innerMat.dispose();
-      sphereGeo.dispose();
-      particleGeo.dispose();
-      particleMat.dispose();
-    };
-  }, [isHovered]);
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setMousePosition({ x, y });
+  };
 
   return (
     <div 
-      ref={containerRef} 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onMouseMove={handleMouseMove}
       style={{ 
         width: '400px', 
         height: '400px', 
         cursor: 'pointer',
-        position: 'relative'
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}
     >
+      {/* Cercles animés en arrière-plan */}
+      <div style={{
+        position: 'absolute',
+        inset: '-50px',
+        zIndex: 0,
+        pointerEvents: 'none'
+      }}>
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: `translate(-50%, -50%) scale(${1 + i * 0.3})`,
+              width: '350px',
+              height: '350px',
+              borderRadius: '50%',
+              border: `2px solid rgba(51, 153, 255, ${0.3 - i * 0.1})`,
+              animation: `pulse ${3 + i}s ease-in-out infinite`,
+              animationDelay: `${i * 0.5}s`,
+              boxShadow: `0 0 ${20 + i * 10}px rgba(51, 153, 255, ${0.3 - i * 0.1})`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Particules flottantes */}
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            width: '4px',
+            height: '4px',
+            background: i % 2 === 0 ? '#3399ff' : '#66b3ff',
+            borderRadius: '50%',
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            animation: `float ${3 + Math.random() * 2}s ease-in-out infinite`,
+            animationDelay: `${Math.random() * 2}s`,
+            boxShadow: `0 0 10px ${i % 2 === 0 ? '#3399ff' : '#66b3ff'}`,
+            opacity: 0.6
+          }}
+        />
+      ))}
+
+      {/* Container de l'image */}
+      <div
+        style={{
+          position: 'relative',
+          width: '350px',
+          height: '350px',
+          borderRadius: '50%',
+          overflow: 'hidden',
+          border: '3px solid #3399ff',
+          boxShadow: isHovered 
+            ? '0 0 40px rgba(51, 153, 255, 0.8), inset 0 0 30px rgba(51, 153, 255, 0.2)' 
+            : '0 0 20px rgba(51, 153, 255, 0.5), inset 0 0 20px rgba(51, 153, 255, 0.1)',
+          transition: 'all 0.3s ease',
+          transform: isHovered 
+            ? `scale(1.05) rotateY(${mousePosition.x * 5}deg) rotateX(${-mousePosition.y * 5}deg)` 
+            : 'scale(1) rotateY(0deg) rotateX(0deg)',
+          zIndex: 10,
+          background: 'rgba(0, 20, 40, 0.5)',
+          backdropFilter: 'blur(10px)'
+        }}
+      >
+        {/* Image */}
+        {!imageError ? (
+          <img
+            src={imageSrc || 'https://via.placeholder.com/400/0a2540/3399ff?text=Votre+Photo'}
+            alt="Profil"
+            onError={() => setImageError(true)}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              filter: isHovered ? 'brightness(1.1) contrast(1.1)' : 'brightness(1) contrast(1)',
+              transition: 'filter 0.3s ease'
+            }}
+          />
+        ) : (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #0a2540, #1a3a5a)',
+            color: '#3399ff',
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            padding: '2rem'
+          }}>
+            📷<br/>Image non trouvée
+          </div>
+        )}
+
+        {/* Effet holographique par-dessus */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: isHovered
+              ? 'linear-gradient(135deg, rgba(51, 153, 255, 0.2) 0%, transparent 50%, rgba(102, 179, 255, 0.2) 100%)'
+              : 'linear-gradient(135deg, rgba(51, 153, 255, 0.1) 0%, transparent 50%, rgba(102, 179, 255, 0.1) 100%)',
+            pointerEvents: 'none',
+            transition: 'all 0.3s ease',
+            mixBlendMode: 'overlay'
+          }}
+        />
+
+        {/* Scan line animée */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, transparent 0%, rgba(51, 153, 255, 0.3) 50%, transparent 100%)',
+            animation: 'scan 3s linear infinite',
+            pointerEvents: 'none',
+            opacity: isHovered ? 0.6 : 0.3,
+            transition: 'opacity 0.3s ease'
+          }}
+        />
+      </div>
+
+      {/* Coins décoratifs */}
+      {['top-left', 'top-right', 'bottom-left', 'bottom-right'].map((corner) => (
+        <div
+          key={corner}
+          style={{
+            position: 'absolute',
+            width: '30px',
+            height: '30px',
+            ...(corner.includes('top') ? { top: '10px' } : { bottom: '10px' }),
+            ...(corner.includes('left') ? { left: '10px' } : { right: '10px' }),
+            borderColor: '#3399ff',
+            borderStyle: 'solid',
+            borderWidth: corner.includes('top') && corner.includes('left') ? '3px 0 0 3px' :
+                         corner.includes('top') && corner.includes('right') ? '3px 3px 0 0' :
+                         corner.includes('bottom') && corner.includes('left') ? '0 0 3px 3px' :
+                         '0 3px 3px 0',
+            boxShadow: '0 0 15px #3399ff',
+            animation: 'pulse 2s ease-in-out infinite',
+            opacity: isHovered ? 1 : 0.6,
+            transition: 'opacity 0.3s ease',
+            zIndex: 20
+          }}
+        />
+      ))}
+
+      {/* Message au survol */}
       {isHovered && (
         <div style={{
           position: 'absolute',
-          top: '50%',
+          bottom: '20px',
           left: '50%',
-          transform: 'translate(-50%, -50%)',
-          color: '#00ffff',
+          transform: 'translateX(-50%)',
+          color: '#3399ff',
           fontSize: '0.875rem',
           fontWeight: 'bold',
           textAlign: 'center',
           pointerEvents: 'none',
-          textShadow: '0 0 10px #00ffff',
+          textShadow: '0 0 10px #3399ff',
           animation: 'fadeIn 0.3s ease',
-          zIndex: 10,
-          background: 'rgba(0, 0, 0, 0.7)',
-          padding: '0.5rem 1rem',
-          borderRadius: '0.5rem',
-          border: '1px solid #00ffff'
+          zIndex: 30,
+          background: 'rgba(0, 0, 0, 0.8)',
+          padding: '0.5rem 1.5rem',
+          borderRadius: '2rem',
+          border: '1px solid #3399ff',
+          backdropFilter: 'blur(10px)'
         }}>
-          Déplacez la souris
+          Salif Ciss
         </div>
       )}
     </div>
@@ -270,13 +214,13 @@ const timelineItems = [
     year: "2021", 
     label: "Début stage chez Volkeno - Développeur Frontend",
     icon: "💻",
-    color: "#00ffff"
+    color: "#3399ff"
   },
   { 
     year: "2024", 
     label: "Début chez IBMS - Responsable IT / Développeur Full Stack",
     icon: "🚀",
-    color: "#ff00ff"
+    color: "#66b3ff"
   },
 ];
 
@@ -288,12 +232,12 @@ const CyberpunkGrid = React.memo(() => {
       zIndex: 0,
       pointerEvents: 'none',
       overflow: 'hidden',
-      background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 0, 255, 0.03) 2px, rgba(255, 0, 255, 0.03) 4px)'
+      background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(51, 153, 255, 0.03) 2px, rgba(51, 153, 255, 0.03) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0, 153, 204, 0.03) 2px, rgba(0, 153, 204, 0.03) 4px)'
     }}>
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(180deg, transparent 0%, rgba(0, 255, 255, 0.1) 50%, transparent 100%)',
+        background: 'linear-gradient(180deg, transparent 0%, rgba(51, 153, 255, 0.1) 50%, transparent 100%)',
         animation: 'scan 4s linear infinite'
       }} />
       
@@ -306,7 +250,7 @@ const CyberpunkGrid = React.memo(() => {
             top: `${Math.random() * 100}%`,
             width: `${Math.random() * 200 + 50}px`,
             height: '2px',
-            background: Math.random() > 0.5 ? '#00ffff' : '#ff00ff',
+            background: Math.random() > 0.5 ? '#3399ff' : '#0099cc',
             animation: `glitch ${Math.random() * 3 + 2}s ease-in-out infinite`,
             animationDelay: `${Math.random() * 2}s`,
             opacity: 0
@@ -319,16 +263,17 @@ const CyberpunkGrid = React.memo(() => {
 
 const About3D = () => {
   const [selectedTimeline, setSelectedTimeline] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [visibleSections, setVisibleSections] = useState({
     title: false,
-    cube: false,
+    image: false,
     text: false
   });
 
   useEffect(() => {
     const timers = [
       setTimeout(() => setVisibleSections(prev => ({ ...prev, title: true })), 100),
-      setTimeout(() => setVisibleSections(prev => ({ ...prev, cube: true })), 400),
+      setTimeout(() => setVisibleSections(prev => ({ ...prev, image: true })), 400),
       setTimeout(() => setVisibleSections(prev => ({ ...prev, text: true })), 700)
     ];
 
@@ -340,6 +285,32 @@ const About3D = () => {
     alert(`${year}: ${label}`);
   }, []);
 
+  // Fonction pour télécharger le CV
+  const handleDownloadCV = () => {
+    setIsDownloading(true);
+    
+    try {
+      const link = document.createElement('a');
+      link.href = '/CV_Salif_Ciss.pdf';
+      link.download = 'CV_Salif_Ciss.pdf';
+      link.target = '_blank';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setTimeout(() => {
+        setIsDownloading(false);
+        console.log('✅ Téléchargement du CV lancé !');
+      }, 1000);
+      
+    } catch (error) {
+      console.error('❌ Erreur lors du téléchargement:', error);
+      setIsDownloading(false);
+      alert('Erreur lors du téléchargement. Veuillez réessayer.');
+    }
+  };
+
   return (
     <section 
       id="about" 
@@ -350,7 +321,7 @@ const About3D = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0033 50%, #001a33 100%)',
+        background: 'linear-gradient(135deg, #001a2e 0%, #002a3a 50%, #001520 100%)',
         color: 'white',
         padding: '4rem 2rem',
         overflow: 'hidden'
@@ -372,8 +343,8 @@ const About3D = () => {
             fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
             fontWeight: 800,
             textAlign: 'center',
-            color: '#00ffff',
-            textShadow: '0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #ff00ff',
+            color: '#3399ff',
+            textShadow: '0 0 10px #3399ff, 0 0 20px #3399ff, 0 0 30px #66b3ff',
             opacity: visibleSections.title ? 1 : 0,
             transform: visibleSections.title ? 'translateY(0)' : 'translateY(-50px)',
             transition: 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -386,7 +357,7 @@ const About3D = () => {
           <span style={{
             position: 'absolute',
             inset: 0,
-            color: '#ff00ff',
+            color: '#66b3ff',
             animation: 'glitchText 3s infinite',
             clipPath: 'inset(0 0 50% 0)'
           }}>
@@ -395,7 +366,7 @@ const About3D = () => {
         </h2>
         <div style={{
           height: '3px',
-          background: 'linear-gradient(90deg, transparent, #00ffff, #ff00ff, transparent)',
+          background: 'linear-gradient(90deg, transparent, #3399ff, #66b3ff, transparent)',
           marginTop: '1rem',
           animation: 'shimmerLine 2s ease-in-out infinite'
         }} />
@@ -416,43 +387,12 @@ const About3D = () => {
             position: 'relative',
             width: '400px',
             height: '400px',
-            opacity: visibleSections.cube ? 1 : 0,
-            transform: visibleSections.cube ? 'scale(1)' : 'scale(0.8)',
+            opacity: visibleSections.image ? 1 : 0,
+            transform: visibleSections.image ? 'scale(1)' : 'scale(0.8)',
             transition: 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
           }}
         >
-          {['top-left', 'top-right', 'bottom-left', 'bottom-right'].map((corner) => (
-            <div
-              key={corner}
-              style={{
-                position: 'absolute',
-                width: '20px',
-                height: '20px',
-                ...(corner.includes('top') ? { top: '-10px' } : { bottom: '-10px' }),
-                ...(corner.includes('left') ? { left: '-10px' } : { right: '-10px' }),
-                borderColor: '#00ffff',
-                borderStyle: 'solid',
-                borderWidth: corner.includes('top') && corner.includes('left') ? '2px 0 0 2px' :
-                             corner.includes('top') && corner.includes('right') ? '2px 2px 0 0' :
-                             corner.includes('bottom') && corner.includes('left') ? '0 0 2px 2px' :
-                             '0 2px 2px 0',
-                boxShadow: '0 0 10px #00ffff',
-                animation: 'pulse 2s ease-in-out infinite'
-              }}
-            />
-          ))}
-          
-          <div style={{
-            position: 'relative',
-            width: '400px',
-            height: '400px',
-            background: 'rgba(0, 20, 40, 0.5)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(0, 255, 255, 0.3)',
-            boxShadow: 'inset 0 0 50px rgba(0, 255, 255, 0.1), 0 0 50px rgba(255, 0, 255, 0.2)'
-          }}>
-            <HolographicCube />
-          </div>
+          <HolographicImage imageSrc="/LOGO1.png" />
         </div>
 
         <div 
@@ -465,24 +405,24 @@ const About3D = () => {
           }}
         >
           <p style={{
-            color: '#00ffff',
+            color: '#3399ff',
             fontSize: '1.125rem',
             lineHeight: 1.9,
             marginBottom: '1.5rem',
-            textShadow: '0 0 5px rgba(0, 255, 255, 0.5)',
+            textShadow: '0 0 5px rgba(51, 153, 255, 0.5)',
             fontFamily: 'system-ui, -apple-system, sans-serif'
           }}>
-            <span style={{ color: '#ff00ff', fontWeight: 'bold' }}>{'>'}</span> Développeur passionné par l'innovation digitale, je conçois des solutions web performantes et sur mesure qui allient excellence technique et expérience utilisateur remarquable. De la conception à la mise en production, je transforme des idées en applications modernes, scalables et intuitives.
+            <span style={{ color: '#66b3ff', fontWeight: 'bold' }}>{'>'}</span> Développeur passionné par l'innovation digitale, je conçois des solutions web performantes et sur mesure qui allient excellence technique et expérience utilisateur remarquable. De la conception à la mise en production, je transforme des idées en applications modernes, scalables et intuitives.
           </p>
 
           <p style={{
-            color: 'rgba(0, 255, 255, 0.8)',
+            color: 'rgba(51, 153, 255, 0.8)',
             fontSize: '1rem',
             lineHeight: 1.9,
             marginBottom: '1.5rem',
             fontFamily: 'system-ui, -apple-system, sans-serif'
           }}>
-            <span style={{ color: '#ff00ff', fontWeight: 'bold' }}>{'>'}</span> Spécialisé dans les technologies front-end et back-end de pointe, je m'engage à créer des interfaces élégantes et des architectures robustes qui répondent aux défis du web d'aujourd'hui.
+            <span style={{ color: '#66b3ff', fontWeight: 'bold' }}>{'>'}</span> Spécialisé dans les technologies front-end et back-end de pointe, je m'engage à créer des interfaces élégantes et des architectures robustes qui répondent aux défis du web d'aujourd'hui.
           </p>
 
           <div style={{
@@ -496,8 +436,8 @@ const About3D = () => {
               top: 0,
               bottom: 0,
               width: '2px',
-              background: 'linear-gradient(180deg, #00ffff, #ff00ff)',
-              boxShadow: '0 0 10px #00ffff'
+              background: 'linear-gradient(180deg, #3399ff, #66b3ff)',
+              boxShadow: '0 0 10px #3399ff'
             }} />
             
             {timelineItems.map(({ year, label, icon, color }, i) => (
@@ -510,12 +450,12 @@ const About3D = () => {
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   background: selectedTimeline === i 
-                    ? 'rgba(0, 255, 255, 0.1)' 
+                    ? 'rgba(51, 153, 255, 0.1)' 
                     : 'rgba(0, 0, 0, 0.3)',
                   backdropFilter: 'blur(10px)',
                   border: selectedTimeline === i 
                     ? `2px solid ${color}` 
-                    : '1px solid rgba(0, 255, 255, 0.2)',
+                    : '1px solid rgba(51, 153, 255, 0.2)',
                   transform: selectedTimeline === i ? 'translateX(10px)' : 'translateX(0)',
                   boxShadow: selectedTimeline === i 
                     ? `0 0 20px ${color}` 
@@ -555,7 +495,7 @@ const About3D = () => {
                   </span>
                 </div>
                 <p style={{
-                  color: selectedTimeline === i ? '#ffffff' : 'rgba(0, 255, 255, 0.8)',
+                  color: selectedTimeline === i ? '#ffffff' : 'rgba(51, 153, 255, 0.8)',
                   fontSize: '1rem',
                   lineHeight: 1.6,
                   transition: 'color 0.3s ease'
@@ -572,16 +512,17 @@ const About3D = () => {
             gap: '1rem',
             marginTop: '3rem'
           }}>
-            <a
-              href="/src/assets/CV_Salif_Ciss (2).pdf"
-              download
+            <button
+              onClick={handleDownloadCV}
+              disabled={isDownloading}
               style={{
                 position: 'relative',
                 padding: '1rem 2rem',
-                background: 'linear-gradient(90deg, #00ffff, #ff00ff)',
-                color: '#000',
+                background: isDownloading 
+                  ? 'linear-gradient(90deg, #00cc66, #3399ff)' 
+                  : 'linear-gradient(90deg, #3399ff, #66b3ff)',
+                color: '#fff',
                 fontWeight: 700,
-                textDecoration: 'none',
                 transition: 'all 0.3s ease',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -590,25 +531,33 @@ const About3D = () => {
                 textTransform: 'uppercase',
                 letterSpacing: '1px',
                 fontFamily: 'monospace',
-                boxShadow: '0 0 20px rgba(0, 255, 255, 0.5)'
+                boxShadow: '0 0 20px rgba(51, 153, 255, 0.5)',
+                border: 'none',
+                cursor: isDownloading ? 'wait' : 'pointer',
+                opacity: isDownloading ? 0.8 : 1
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 255, 0.8)';
+                if (!isDownloading) {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(51, 153, 255, 0.8)';
+                }
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 255, 255, 0.5)';
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(51, 153, 255, 0.5)';
               }}
             >
-              <span>📄 TÉLÉCHARGER CV</span>
-            </a>
+              <span>
+                {isDownloading ? '⏳ TÉLÉCHARGEMENT...' : '📄 TÉLÉCHARGER CV'}
+              </span>
+            </button>
+
             <a
               href="#contact"
               style={{
                 padding: '1rem 2rem',
-                border: '2px solid #00ffff',
-                color: '#00ffff',
+                border: '2px solid #3399ff',
+                color: '#3399ff',
                 background: 'rgba(0, 0, 0, 0.5)',
                 fontWeight: 700,
                 textDecoration: 'none',
@@ -623,14 +572,14 @@ const About3D = () => {
                 fontFamily: 'monospace'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#00ffff';
-                e.currentTarget.style.color = '#000';
+                e.currentTarget.style.background = '#3399ff';
+                e.currentTarget.style.color = '#fff';
                 e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 255, 0.8)';
+                e.currentTarget.style.boxShadow = '0 0 30px rgba(51, 153, 255, 0.8)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)';
-                e.currentTarget.style.color = '#00ffff';
+                e.currentTarget.style.color = '#3399ff';
                 e.currentTarget.style.transform = 'scale(1)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
@@ -679,6 +628,13 @@ const About3D = () => {
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(10px, -10px); }
+          50% { transform: translate(-5px, 5px); }
+          75% { transform: translate(-10px, -5px); }
         }
       `}</style>
     </section>
