@@ -516,7 +516,7 @@ const Navbar = () => {
               onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
-              Dedcode77
+              DedcodeTech
             </a>
 
             {/* Menu desktop */}

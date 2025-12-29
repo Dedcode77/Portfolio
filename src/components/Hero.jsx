@@ -390,7 +390,7 @@ const Hero = () => {
               }}>
                 Architecte de solutions digitales innovantes.
                 <br />
-                Spécialiste React • Node.js • Cloud Architecture
+                Spécialiste React • Node.js • Django • Next js
               </p>
 
               {/* Boutons */}
