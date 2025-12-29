@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('#hero');
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -18,60 +17,65 @@ const Navbar = () => {
   ];
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Détecter la direction du scroll
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scroll vers le bas - cacher la navbar
-        setIsVisible(false);
-      } else {
-        // Scroll vers le haut - montrer la navbar
-        setIsVisible(true);
-      }
-      
-      setLastScrollY(currentScrollY);
-      setIsScrolled(currentScrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          // Détecter la direction du scroll
+          if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            setIsVisible(false);
+          } else {
+            setIsVisible(true);
+          }
+          
+          setLastScrollY(currentScrollY);
+          setIsScrolled(currentScrollY > 20);
 
-      // Détection de la section active
-      const sections = navLinks.map(link => link.to.substring(1));
-      const currentSection = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      
-      if (currentSection) {
-        setActiveSection(`#${currentSection}`);
+          // Détection de la section active
+          const sections = navLinks.map(link => link.to.substring(1));
+          const currentSection = sections.find(section => {
+            const element = document.getElementById(section);
+            if (element) {
+              const rect = element.getBoundingClientRect();
+              return rect.top <= 100 && rect.bottom >= 100;
+            }
+            return false;
+          });
+          
+          if (currentSection) {
+            setActiveSection(`#${currentSection}`);
+          }
+
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [lastScrollY]);
+  }, [lastScrollY, navLinks]);
 
-  const handleClick = (to) => {
+  const handleClick = useCallback((to) => {
     setIsOpen(false);
     const element = document.querySelector(to);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, []);
 
   return (
     <>
       <style>{`
+        * {
+          box-sizing: border-box;
+        }
+
         @keyframes slideDown {
           from {
             opacity: 0;
@@ -86,23 +90,6 @@ const Navbar = () => {
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
-        }
-
-        @keyframes neonPulse {
-          0%, 100% {
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.8),
-                         0 0 20px rgba(59, 130, 246, 0.6),
-                         0 0 30px rgba(59, 130, 246, 0.4),
-                         0 0 40px rgba(59, 130, 246, 0.2);
-            filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.6));
-          }
-          50% {
-            text-shadow: 0 0 15px rgba(59, 130, 246, 1),
-                         0 0 30px rgba(59, 130, 246, 0.8),
-                         0 0 45px rgba(59, 130, 246, 0.6),
-                         0 0 60px rgba(59, 130, 246, 0.4);
-            filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.8));
-          }
         }
 
         @keyframes glitch {
@@ -182,6 +169,7 @@ const Navbar = () => {
           display: flex;
           align-items: center;
           gap: 6px;
+          text-decoration: none;
         }
 
         .nav-link::before {
@@ -193,6 +181,7 @@ const Navbar = () => {
           color: #60a5fa;
           filter: blur(2px);
           transition: opacity 0.3s ease;
+          pointer-events: none;
         }
 
         .nav-link:hover::before {
@@ -239,6 +228,7 @@ const Navbar = () => {
           font-weight: 900;
           text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
           position: relative;
+          text-decoration: none;
         }
 
         .btn-cyber {
@@ -307,6 +297,8 @@ const Navbar = () => {
           letter-spacing: 0.12em;
           position: relative;
           overflow: hidden;
+          text-decoration: none;
+          display: block;
         }
 
         .mobile-menu-item::before {
@@ -347,6 +339,7 @@ const Navbar = () => {
           opacity: 0.6;
           transition: all 0.3s ease;
           z-index: 1;
+          pointer-events: none;
         }
 
         .corner-tl {
@@ -395,36 +388,138 @@ const Navbar = () => {
           pointer-events: none;
           opacity: 0.5;
         }
+
+        nav {
+          position: fixed;
+          width: 100%;
+          z-index: 50;
+          transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-visible {
+          transform: translateY(0);
+        }
+
+        .nav-hidden {
+          transform: translateY(-100%);
+        }
+
+        .py-3 {
+          padding-top: 0.75rem;
+          padding-bottom: 0.75rem;
+        }
+
+        .py-5 {
+          padding-top: 1.25rem;
+          padding-bottom: 1.25rem;
+        }
+
+        .max-w-7xl {
+          max-width: 80rem;
+        }
+
+        .mx-auto {
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .px-4 {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+
+        .flex {
+          display: flex;
+        }
+
+        .items-center {
+          align-items: center;
+        }
+
+        .justify-between {
+          justify-content: space-between;
+        }
+
+        .gap-10 {
+          gap: 2.5rem;
+        }
+
+        .hidden {
+          display: none;
+        }
+
+        .text-gray-300 {
+          color: rgb(209, 213, 219);
+        }
+
+        .text-blue-400 {
+          color: rgb(96, 165, 250);
+        }
+
+        @media (min-width: 768px) {
+          .md\\:flex {
+            display: flex;
+          }
+          .md\\:hidden {
+            display: none;
+          }
+          .md\\:text-3xl {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+          }
+        }
+
+        @media (min-width: 640px) {
+          .sm\\:px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .lg\\:px-8 {
+            padding-left: 2rem;
+            padding-right: 2rem;
+          }
+        }
       `}</style>
 
       <nav
-        className={`fixed w-full z-50 transition-all duration-700 ${
-          isScrolled ? 'nav-blur py-3' : 'nav-transparent py-5'
-        } ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
+        className={`${isScrolled ? 'nav-blur py-3' : 'nav-transparent py-5'} ${isVisible ? 'nav-visible' : 'nav-hidden'}`}
       >
         <div className="grid-overlay"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="nav-container flex justify-between items-center relative">
+          <div className="nav-container flex justify-between items-center">
             {/* Accents décoratifs aux 4 coins */}
             <div className="corner-accent corner-tl"></div>
             <div className="corner-accent corner-tr"></div>
             <div className="corner-accent corner-bl"></div>
             <div className="corner-accent corner-br"></div>
 
-            {/* Logo amélioré */}
+            {/* Logo */}
             <a 
               href="#hero"
               onClick={(e) => {
                 e.preventDefault();
                 handleClick('#hero');
               }}
-              className="text-2xl md:text-3xl logo-gradient tracking-tight hover:scale-110 transition-all duration-300 cursor-pointer relative z-10"
+              className="logo-gradient"
+              style={{
+                fontSize: 'clamp(1.5rem, 4vw, 1.875rem)',
+                letterSpacing: '-0.025em',
+                cursor: 'pointer',
+                position: 'relative',
+                zIndex: 10,
+                transition: 'transform 0.3s ease'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
               Dedcode77
             </a>
 
-            {/* Menu desktop avec icônes */}
+            {/* Menu desktop */}
             <div className="hidden md:flex items-center gap-10">
               {navLinks.map((link) => (
                 <a
@@ -435,11 +530,16 @@ const Navbar = () => {
                     handleClick(link.to);
                   }}
                   data-text={link.label}
-                  className={`nav-link text-xs font-bold uppercase ${
+                  className={`nav-link ${
                     activeSection === link.to 
                       ? 'active' 
-                      : 'text-gray-300 hover:text-blue-400'
-                  } transition-all duration-300`}
+                      : 'text-gray-300'
+                  }`}
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase'
+                  }}
                 >
                   <span className="nav-link-icon">{link.icon}</span>
                   <span>{link.label}</span>
@@ -448,37 +548,89 @@ const Navbar = () => {
               
               <button 
                 onClick={() => handleClick('#contact')}
-                className="btn-cyber px-7 py-3 rounded-none font-bold text-xs uppercase"
+                className="btn-cyber"
+                style={{
+                  padding: '0.75rem 1.75rem',
+                  fontWeight: 'bold',
+                  fontSize: '0.75rem',
+                  textTransform: 'uppercase'
+                }}
               >
-                <span className="relative z-10">Me Contacter</span>
+                <span style={{ position: 'relative', zIndex: 10 }}>Me Contacter</span>
               </button>
             </div>
 
-            {/* Menu mobile - burger animé amélioré */}
+            {/* Menu mobile - burger */}
             <button 
               onClick={() => setIsOpen(!isOpen)} 
-              className="md:hidden p-3 rounded-sm transition-all text-blue-400 hover:bg-blue-400/10 relative z-10 group"
+              className="md:hidden"
+              style={{
+                padding: '0.75rem',
+                transition: 'all 0.3s',
+                color: 'rgb(96, 165, 250)',
+                position: 'relative',
+                zIndex: 10,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               aria-label="Menu"
             >
-              <div className="w-6 h-5 flex flex-col justify-between">
+              <div style={{
+                width: '1.5rem',
+                height: '1.25rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              }}>
                 <span 
-                  className={`burger-line h-0.5 w-full rounded-full ${isOpen ? 'rotate-45 translate-y-2' : ''}`}
+                  className="burger-line"
+                  style={{
+                    height: '0.125rem',
+                    width: '100%',
+                    borderRadius: '9999px',
+                    transform: isOpen ? 'rotate(45deg) translateY(0.5rem)' : 'none'
+                  }}
                 />
                 <span 
-                  className={`burger-line h-0.5 w-full rounded-full ${isOpen ? 'opacity-0' : ''}`}
+                  className="burger-line"
+                  style={{
+                    height: '0.125rem',
+                    width: '100%',
+                    borderRadius: '9999px',
+                    opacity: isOpen ? 0 : 1
+                  }}
                 />
                 <span 
-                  className={`burger-line h-0.5 w-full rounded-full ${isOpen ? '-rotate-45 -translate-y-2' : ''}`}
+                  className="burger-line"
+                  style={{
+                    height: '0.125rem',
+                    width: '100%',
+                    borderRadius: '9999px',
+                    transform: isOpen ? 'rotate(-45deg) translateY(-0.5rem)' : 'none'
+                  }}
                 />
               </div>
             </button>
           </div>
         </div>
 
-        {/* Menu mobile déroulant amélioré */}
+        {/* Menu mobile déroulant */}
         {isOpen && (
-          <div className="mobile-menu md:hidden mt-4 mx-4 rounded-none overflow-hidden">
-            <div className="px-6 py-6 space-y-2">
+          <div className="mobile-menu md:hidden" style={{
+            marginTop: '1rem',
+            marginLeft: '1rem',
+            marginRight: '1rem',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              padding: '1.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem'
+            }}>
               {navLinks.map((link, index) => (
                 <a
                   key={link.to}
@@ -487,40 +639,59 @@ const Navbar = () => {
                     e.preventDefault();
                     handleClick(link.to);
                   }}
-                  className={`mobile-menu-item flex items-center gap-3 py-4 px-5 font-bold uppercase text-sm transition-all duration-300 ${
+                  className={`mobile-menu-item ${
                     activeSection === link.to
                       ? 'active'
-                      : 'text-gray-300 hover:text-blue-400'
+                      : 'text-gray-300'
                   }`}
-                  style={{ 
+                  style={{
+                    padding: '1rem 1.25rem',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    fontSize: '0.875rem',
                     animationDelay: `${index * 0.05}s`,
-                    animation: 'slideDown 0.3s ease-out forwards'
+                    animation: 'slideDown 0.3s ease-out forwards',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem'
                   }}
                 >
-                  <span className="text-xl">{link.icon}</span>
+                  <span style={{ fontSize: '1.25rem' }}>{link.icon}</span>
                   <span>{link.label}</span>
                 </a>
               ))}
               
               <button 
                 onClick={() => handleClick('#contact')}
-                className="mt-6 w-full btn-cyber px-6 py-4 rounded-none font-bold uppercase text-sm"
+                className="btn-cyber"
+                style={{
+                  marginTop: '1.5rem',
+                  width: '100%',
+                  padding: '1rem 1.5rem',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  fontSize: '0.875rem'
+                }}
               >
-                <span className="relative z-10">Me Contacter</span>
+                <span style={{ position: 'relative', zIndex: 10 }}>Me Contacter</span>
               </button>
             </div>
           </div>
         )}
 
-        {/* Overlay amélioré */}
+        {/* Overlay */}
         {isOpen && (
           <div 
-            className="md:hidden fixed inset-0 backdrop-blur-md -z-10"
             onClick={() => setIsOpen(false)}
-            style={{ 
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backdropFilter: 'blur(0.75rem)',
+              zIndex: -10,
               animation: 'fadeIn 0.3s ease-out',
               background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.1), rgba(0, 0, 0, 0.8))'
             }}
+            className="md:hidden"
           />
         )}
       </nav>
