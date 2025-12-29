@@ -1,4 +1,5 @@
 import { useState, memo } from "react";
+import { Smartphone, Star, AlarmClock } from "lucide-react";
 
 const skillCategories = [
   {
@@ -25,7 +26,7 @@ const skillCategories = [
   },
   {
     category: "Mobile & Cloud",
-    icon: "📱",
+    icon:<Smartphone />,
     color: "#cc00ff",
     skills: [
       { name: "Flutter", level: 65, desc: "Apps cross-platform", yearsExp: "1+" },
@@ -558,10 +559,10 @@ const SkillsRadial = () => {
             gap: '2rem'
           }}>
             {[
-              { label: "Technologies", value: skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0), icon: "⚡" },
-              { label: "Projets", value: "50+", icon: "🚀" },
-              { label: "Heures", value: "5000+", icon: "⏱️" },
-              { label: "Clients", value: "25+", icon: "⭐" }
+              { label: "Technologies", value: skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0), icon: "" },
+              { label: "Projets", value: "7+", icon: "" },
+              { label: "Heures", value: "5000+", icon: <AlarmClock /> },
+              { label: "Clients", value: "6+", icon: <Star/> }
             ].map((stat, i) => (
               <div 
                 key={i} 

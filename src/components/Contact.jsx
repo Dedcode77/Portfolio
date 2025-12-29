@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Mail, Smartphone, BriefcaseBusiness } from "lucide-react";
+
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -569,21 +571,21 @@ const Contact = () => {
               label: "Email",
               value: "salifciss222@gmail.com",
               href: "mailto:salifciss222@gmail.com",
-              icon: "📧",
+              icon: <Mail />,
               color: "#3399ff",
             },
             {
               label: "Téléphone",
               value: "+221 77 227 49 87",
               href: "tel:+221772274987",
-              icon: "📱",
+              icon: <Smartphone />,
               color: "#cc00ff",
             },
             {
               label: "LinkedIn",
               value: "Salif Ciss",
               href: "https://www.linkedin.com/in/salif-ciss-672990267",
-              icon: "💼",
+              icon: <BriefcaseBusiness />,
               color: "#00cc66",
             },
           ].map(({ label, value, href, icon, color }) => (

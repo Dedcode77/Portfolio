@@ -9,18 +9,18 @@ const allProjects = [
     color: "#3399ff",
     demo: "#",
     code: "#",
-    impact: "2500+ étudiants",
+    // impact: "2500+ étudiants",
     status: "Production"
   },
   {
     title: "Création et Gestion formulaires IA",
     description: "Générateur intelligent de formulaires avec validation automatique et analyse des réponses par IA.",
     image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
-    stack: ["React", "Firebase"],
+    stack: ["next js", ""],
     color: "#cc00ff",
     demo: "#",
     code: "#",
-    impact: "50k formulaires/mois",
+    // impact: "50k formulaires/mois",
     status: "Production"
   },
   {
@@ -31,31 +31,31 @@ const allProjects = [
     color: "#00cc66",
     demo: "#",
     code: "#",
-    impact: "10k utilisateurs actifs",
+    impact: "",
     status: "Beta"
   },
-  {
-    title: "Plateforme collaborative",
-    description: "Espace de travail collaboratif avec visioconférence intégrée et tableau blanc interactif.",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80",
-    stack: ["React", "Firebase"],
-    color: "#ff6600",
-    demo: "#",
-    code: "#",
-    impact: "300+ équipes",
-    status: "Production"
-  },
-  {
-    title: "Assistant mobile vocal",
-    description: "App Flutter avec commandes vocales IA pour gérer les tâches éducatives à distance et planification intelligente.",
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80",
-    stack: ["Flutter", "Firebase"],
-    color: "#ff0099",
-    demo: "#",
-    code: "#",
-    impact: "4.8★ sur stores",
-    status: "Production"
-  },
+  // {
+  //   title: "Plateforme collaborative",
+  //   description: "Espace de travail collaboratif avec visioconférence intégrée et tableau blanc interactif.",
+  //   image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80",
+  //   stack: ["React", "Firebase"],
+  //   color: "#ff6600",
+  //   demo: "#",
+  //   code: "#",
+  //   impact: "300+ équipes",
+  //   status: "Production"
+  // },
+  // {
+  //   title: "Assistant mobile vocal",
+  //   description: "App Flutter avec commandes vocales IA pour gérer les tâches éducatives à distance et planification intelligente.",
+  //   image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80",
+  //   stack: ["Flutter", "Firebase"],
+  //   color: "#ff0099",
+  //   demo: "#",
+  //   code: "#",
+  //   impact: "4.8★ sur stores",
+  //   status: "Production"
+  // },
   {
     title: "Dashboard Analytics",
     description: "Tableau de bord avancé avec visualisations interactives et prédictions ML pour insights éducatifs.",
@@ -64,7 +64,7 @@ const allProjects = [
     color: "#ffaa00",
     demo: "#",
     code: "#",
-    impact: "1M+ data points",
+    // impact: "1M+ data points",
     status: "Production"
   }
 ];
