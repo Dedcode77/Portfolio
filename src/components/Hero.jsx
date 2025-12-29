@@ -388,9 +388,9 @@ const Hero = () => {
                 lineHeight: 1.8,
                 fontFamily: 'system-ui'
               }}>
-                Architecte de solutions digitales innovantes.
+                Architecte de solutions digitales innovantes et sur mesure.
                 <br />
-                Spécialiste React • Node.js • Django • Next js
+               Spécialiste Full-Stack – React, Next.js, Node.js & Django
               </p>
 
               {/* Boutons */}
