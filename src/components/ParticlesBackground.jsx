@@ -13,21 +13,18 @@ const ParticlesBackground = () => {
       options={{
         fullScreen: { enable: true, zIndex: -1 },
         background: {
-          color: { value: "#ffffff" },
+          color: { value: "transparent" },
+          
         },
         particles: {
-          number: { value: 60 },
-          size: { value: { min: 4, max: 8 }, random: true },
-          shape: { type: "circle" },
-          color: { value: ["#6366f1", "#a855f7", "#facc15", "#ec4899"] },
-          opacity: { value: 0.4 },
-          move: {
-            enable: true,
-            speed: 2,
-            direction: "top",
-            straight: false,
-            outModes: { default: "out" },
-          },
+        color: { value: "#3399ff" }, // Bleu comme tes compétences
+  lineLinked: { // Ajoute des lignes pour un effet "réseau/neuronal"
+    enable: true,
+    distance: 150,
+    color: "#3399ff",
+    opacity: 0.2,
+    width: 1
+  },
         },
         interactivity: {
           events: {
