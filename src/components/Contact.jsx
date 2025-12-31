@@ -1,13 +1,8 @@
 import { useState } from "react";
-import { Mail, Smartphone, BriefcaseBusiness } from "lucide-react";
-
+import { Mail, Smartphone, BriefcaseBusiness, Send, CheckCircle2, AlertTriangle } from "lucide-react";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -16,54 +11,41 @@ const Contact = () => {
   const validate = () => {
     const errs = {};
     if (!formData.name.trim()) errs.name = "Nom requis";
-    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
-      errs.email = "Email invalide";
-    if (!formData.message.trim()) errs.message = "Message requis";
-    if (formData.message.trim().length < 10)
-      errs.message = "Message trop court (min. 10 caractères)";
+    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) errs.email = "Email invalide";
+    if (formData.message.trim().length < 10) errs.message = "Message trop court (min. 10 caractères)";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: null });
+    if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: null });
     setSendError(false);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!validate()) return;
 
     setIsLoading(true);
     setSendError(false);
 
     try {
-      const serviceId = "service_y6770h8";
-      const templateId = "template_x3ocm2k";
-      const publicKey = "XzWcGVv7BBmtNKG2d";
-
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
-        message: formData.message,
-        to_email: "salifciss222@gmail.com",
-      };
-
-      const response = await fetch(
-        "https://api.emailjs.com/api/v1.0/email/send",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id: "service_y6770h8",
+          template_id: "template_x3ocm2k",
+          user_id: "XzWcGVv7BBmtNKG2d",
+          template_params: {
+            from_name: formData.name,
+            from_email: formData.email,
+            message: formData.message,
+            to_email: "salifciss222@gmail.com",
           },
-          body: JSON.stringify({
-            service_id: serviceId,
-            template_id: templateId,
-            user_id: publicKey,
-            template_params: templateParams,
-          }),
-        }
-      );
+        }),
+      });
 
       if (response.ok) {
         setSubmitted(true);
@@ -72,594 +54,146 @@ const Contact = () => {
         setSendError(true);
       }
     } catch (error) {
-      console.error("Erreur:", error);
       setSendError(true);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const contactInfo = [
+    { label: "Email", value: "salifciss222@gmail.com", href: "mailto:salifciss222@gmail.com", icon: Mail, color: "hover:border-blue-500 hover:shadow-blue-500/20", iconBg: "bg-blue-500/20", iconCol: "text-blue-400" },
+    { label: "Téléphone", value: "+221 77 227 49 87", href: "tel:+221772274987", icon: Smartphone, color: "hover:border-purple-500 hover:shadow-purple-500/20", iconBg: "bg-purple-500/20", iconCol: "text-purple-400" },
+    { label: "LinkedIn", value: "Salif Ciss", href: "https://www.linkedin.com/in/salif-ciss-672990267", icon: BriefcaseBusiness, color: "hover:border-green-500 hover:shadow-green-500/20", iconBg: "bg-green-500/20", iconCol: "text-green-400" },
+  ];
+
   return (
     <>
       <style>{`
-        @keyframes scan {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100vh); }
-        }
-
-        @keyframes glowPulse {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .scan-line {
-          position: absolute;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, #3399ff, transparent);
-          box-shadow: 0 0 20px #3399ff;
-          animation: scan 8s linear infinite;
-          opacity: 0.3;
-          pointer-events: none;
-        }
-
-        .animate-slideIn {
-          animation: slideIn 0.6s ease-out;
-        }
-
-        .spinner {
-          border: 3px solid rgba(51, 153, 255, 0.3);
-          border-top: 3px solid #3399ff;
-          border-radius: 50%;
-          width: 20px;
-          height: 20px;
-          animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
+        @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
+        .animate-scan { animation: scan 8s linear infinite; }
+        .clip-path-cyber { clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); }
+        .clip-path-btn { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
       `}</style>
 
-      <section
-        id="contact"
-        style={{
-          position: 'relative',
-          minHeight: '100vh',
-          background: 'linear-gradient(135deg, #001a2e 0%, #002a3a 50%, #001520 100%)',
-          padding: '5rem 1rem',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          color: 'white'
-        }}
-      >
-        {/* Scan lines */}
-        <div className="scan-line" />
-        <div className="scan-line" style={{ animationDelay: '4s' }} />
-
-        {/* Grille de fond */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={`h-${i}`}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '1px',
-              top: `${i * 5}%`,
-              left: 0,
-              background: 'rgba(51, 153, 255, 0.05)'
-            }}
-          />
-        ))}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={`v-${i}`}
-            style={{
-              position: 'absolute',
-              width: '1px',
-              height: '100%',
-              left: `${i * 5}%`,
-              top: 0,
-              background: 'rgba(51, 153, 255, 0.05)'
-            }}
-          />
-        ))}
+      <section id="contact" className="relative min-h-screen bg-gradient-to-br from-[#001a2e] via-[#002a3a] to-[#001520] py-20 px-4 overflow-hidden text-white flex flex-col items-center justify-center font-mono">
+        
+        {/* Background Effects */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent shadow-[0_0_20px_#3399ff] opacity-30 animate-scan" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
+          <div className="absolute inset-0 grid grid-cols-12 opacity-5">
+            {[...Array(12)].map((_, i) => <div key={i} className="border-r border-blue-400" />)}
+          </div>
+        </div>
 
         {/* Header */}
-        <div className="animate-slideIn" style={{
-          textAlign: 'center',
-          marginBottom: '4rem',
-          position: 'relative',
-          zIndex: 10
-        }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            marginBottom: '1rem',
-            padding: '0.5rem 1rem',
-            background: 'rgba(0, 0, 0, 0.6)',
-            border: '1px solid #3399ff',
-            borderRadius: '20px',
-            fontFamily: 'monospace',
-            fontSize: '0.875rem',
-            color: '#66b3ff'
-          }}>
-            <span>✉️</span>
-            <span>RESTONS_EN_CONTACT</span>
+        <div className="relative z-10 text-center mb-16 animate-in fade-in slide-in-from-bottom-5 duration-700">
+          <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 bg-black/60 border border-blue-500 rounded-full text-blue-400 text-sm">
+            <span>✉️</span> RESTONS_EN_CONTACT
           </div>
-
-          <h2 style={{
-            fontSize: 'clamp(2.5rem, 8vw, 4rem)',
-            fontWeight: 900,
-            marginBottom: '1rem',
-            color: '#3399ff',
-            fontFamily: 'monospace',
-            letterSpacing: '0.1em',
-            textShadow: '0 0 30px rgba(51, 153, 255, 0.8)'
-          }}>
-            [ CONTACTEZ-MOI ]
+          <h2 className="text-4xl md:text-7xl font-black mb-4 text-blue-500 tracking-widest drop-shadow-[0_0_30px_rgba(51,153,255,0.8)] uppercase">
+            [ Contactez-moi ]
           </h2>
-
-          <p style={{
-            fontSize: 'clamp(1rem, 2vw, 1.25rem)',
-            color: 'rgba(102, 179, 255, 0.8)',
-            maxWidth: '700px',
-            margin: '0 auto'
-          }}>
-            Une question ? Une opportunité ? Un projet ? N'hésitez pas à me contacter
+          <p className="text-blue-300/80 max-w-2xl mx-auto text-lg">
+            Une question ? Une opportunité ? Un projet ? N'hésitez pas à me contacter.
           </p>
         </div>
 
-        {/* Formulaire */}
-        <div className="animate-slideIn" style={{
-          position: 'relative',
-          background: 'rgba(0, 0, 0, 0.6)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '15px',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
-          maxWidth: '700px',
-          width: '100%',
-          padding: 'clamp(1.5rem, 5vw, 3rem)',
-          border: '2px solid rgba(51, 153, 255, 0.3)',
-          zIndex: 10,
-          clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))',
-          animationDelay: '0.2s'
-        }}>
+        {/* Form Container */}
+        <div className="relative z-10 w-full max-w-2xl bg-black/60 backdrop-blur-xl border-2 border-blue-500/30 p-8 md:p-12 clip-path-cyber shadow-2xl animate-in fade-in slide-in-from-bottom-10 duration-1000">
           {!submitted ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {/* Nom */}
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: '#66b3ff',
-                  marginBottom: '0.5rem',
-                  fontFamily: 'monospace'
-                }}>
-                  {'>'} NOM_COMPLET
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Votre nom"
-                  value={formData.name}
-                  onChange={handleChange}
-                  style={{
-                    width: '100%',
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: `1px solid ${errors.name ? '#ff4444' : 'rgba(51, 153, 255, 0.3)'}`,
-                    borderRadius: '8px',
-                    padding: '1rem 1.25rem',
-                    color: 'white',
-                    fontSize: '1rem',
-                    outline: 'none',
-                    transition: 'all 0.3s',
-                    fontFamily: 'monospace'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#3399ff';
-                    e.target.style.boxShadow = '0 0 20px rgba(51, 153, 255, 0.3)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.name ? '#ff4444' : 'rgba(51, 153, 255, 0.3)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-                {errors.name && (
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    color: '#ff4444',
-                    fontSize: '0.875rem',
-                    marginTop: '0.5rem',
-                    fontFamily: 'monospace'
-                  }}>
-                    <span>⚠️</span>
-                    {errors.name}
-                  </div>
-                )}
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {[
+                { label: "NOM_COMPLET", name: "name", type: "text", placeholder: "Votre nom" },
+                { label: "ADRESSE_EMAIL", name: "email", type: "email", placeholder: "votre@email.com" }
+              ].map((field) => (
+                <div key={field.name}>
+                  <label className="block text-sm text-blue-400 mb-2 uppercase tracking-tighter">{"> "} {field.label}</label>
+                  <input
+                    type={field.type}
+                    name={field.name}
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                    placeholder={field.placeholder}
+                    className={`w-full bg-black/50 border ${errors[field.name] ? 'border-red-500' : 'border-blue-500/30'} rounded-lg p-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all`}
+                  />
+                  {errors[field.name] && <span className="text-red-500 text-xs mt-1 block">⚠️ {errors[field.name]}</span>}
+                </div>
+              ))}
 
-              {/* Email */}
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: '#66b3ff',
-                  marginBottom: '0.5rem',
-                  fontFamily: 'monospace'
-                }}>
-                  {'>'} ADRESSE_EMAIL
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="votre@email.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  style={{
-                    width: '100%',
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: `1px solid ${errors.email ? '#ff4444' : 'rgba(51, 153, 255, 0.3)'}`,
-                    borderRadius: '8px',
-                    padding: '1rem 1.25rem',
-                    color: 'white',
-                    fontSize: '1rem',
-                    outline: 'none',
-                    transition: 'all 0.3s',
-                    fontFamily: 'monospace'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#3399ff';
-                    e.target.style.boxShadow = '0 0 20px rgba(51, 153, 255, 0.3)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.email ? '#ff4444' : 'rgba(51, 153, 255, 0.3)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-                {errors.email && (
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    color: '#ff4444',
-                    fontSize: '0.875rem',
-                    marginTop: '0.5rem',
-                    fontFamily: 'monospace'
-                  }}>
-                    <span>⚠️</span>
-                    {errors.email}
-                  </div>
-                )}
-              </div>
-
-              {/* Message */}
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: '#66b3ff',
-                  marginBottom: '0.5rem',
-                  fontFamily: 'monospace'
-                }}>
-                  {'>'} VOTRE_MESSAGE
-                </label>
+                <label className="block text-sm text-blue-400 mb-2 uppercase tracking-tighter">{"> "} VOTRE_MESSAGE</label>
                 <textarea
                   name="message"
-                  rows="5"
-                  placeholder="Décrivez votre projet ou votre demande..."
+                  rows="4"
                   value={formData.message}
                   onChange={handleChange}
-                  style={{
-                    width: '100%',
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    border: `1px solid ${errors.message ? '#ff4444' : 'rgba(51, 153, 255, 0.3)'}`,
-                    borderRadius: '8px',
-                    padding: '1rem 1.25rem',
-                    color: 'white',
-                    fontSize: '1rem',
-                    outline: 'none',
-                    transition: 'all 0.3s',
-                    resize: 'none',
-                    fontFamily: 'monospace'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#3399ff';
-                    e.target.style.boxShadow = '0 0 20px rgba(51, 153, 255, 0.3)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.message ? '#ff4444' : 'rgba(51, 153, 255, 0.3)';
-                    e.target.style.boxShadow = 'none';
-                  }}
+                  placeholder="Décrivez votre projet..."
+                  className={`w-full bg-black/50 border ${errors.message ? 'border-red-500' : 'border-blue-500/30'} rounded-lg p-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none`}
                 />
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
-                  {errors.message && (
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      color: '#ff4444',
-                      fontSize: '0.875rem',
-                      fontFamily: 'monospace'
-                    }}>
-                      <span>⚠️</span>
-                      {errors.message}
-                    </div>
-                  )}
-                  <span style={{
-                    fontSize: '0.75rem',
-                    color: 'rgba(102, 179, 255, 0.6)',
-                    marginLeft: 'auto',
-                    fontFamily: 'monospace'
-                  }}>
-                    {formData.message.length} caractères
-                  </span>
+                <div className="flex justify-between mt-1">
+                  {errors.message && <span className="text-red-500 text-xs block">⚠️ {errors.message}</span>}
+                  <span className="text-blue-400/50 text-[10px] ml-auto">{formData.message.length} caractères</span>
                 </div>
               </div>
 
-              {/* Erreur d'envoi */}
               {sendError && (
-                <div style={{
-                  background: 'rgba(255, 68, 68, 0.2)',
-                  border: '1px solid rgba(255, 68, 68, 0.5)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '0.75rem'
-                }}>
-                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>⚠️</span>
-                  <div>
-                    <p style={{ color: '#ffcccc', fontWeight: 600, marginBottom: '0.25rem' }}>
-                      Erreur d'envoi
-                    </p>
-                    <p style={{ color: '#ffdddd', fontSize: '0.875rem' }}>
-                      Une erreur s'est produite. Veuillez réessayer ou me contacter directement par email.
-                    </p>
-                  </div>
+                <div className="flex gap-3 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-200 text-sm">
+                  <AlertTriangle className="shrink-0" />
+                  <p>Erreur d'envoi. Veuillez réessayer ou utiliser l'email direct.</p>
                 </div>
               )}
 
-              {/* Bouton Submit */}
               <button
-                onClick={handleSubmit}
+                type="submit"
                 disabled={isLoading}
-                style={{
-                  width: '100%',
-                  background: isLoading ? 'rgba(51, 153, 255, 0.5)' : 'linear-gradient(135deg, #3399ff, #0099cc)',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: isLoading ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.3s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.5rem',
-                  fontSize: '1rem',
-                  fontFamily: 'monospace',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))',
-                  opacity: isLoading ? 0.7 : 1
-                }}
-                onMouseEnter={(e) => {
-                  if (!isLoading) {
-                    e.currentTarget.style.transform = 'scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 10px 40px rgba(51, 153, 255, 0.5)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
+                className={`w-full group relative flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 font-bold uppercase tracking-widest clip-path-btn transition-all active:scale-95 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]'}`}
               >
                 {isLoading ? (
-                  <>
-                    <div className="spinner" />
-                    Envoi en cours...
-                  </>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    <span>📨</span>
+                    <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                     Envoyer le message
                   </>
                 )}
               </button>
-            </div>
+            </form>
           ) : (
-            <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-              <div style={{
-                width: '80px',
-                height: '80px',
-                background: 'rgba(0, 204, 102, 0.2)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1.5rem',
-                fontSize: '3rem',
-                border: '2px solid #00cc66',
-                animation: 'glowPulse 2s ease-in-out infinite'
-              }}>
-                ✓
+            <div className="text-center py-10 space-y-6 animate-in zoom-in duration-500">
+              <div className="w-20 h-20 bg-green-500/20 border-2 border-green-500 rounded-full flex items-center justify-center mx-auto text-green-500 shadow-[0_0_30px_rgba(34,197,94,0.4)]">
+                <CheckCircle2 size={40} />
               </div>
-              <h3 style={{
-                fontSize: 'clamp(1.5rem, 4vw, 2rem)',
-                fontWeight: 'bold',
-                marginBottom: '1rem',
-                color: 'white',
-                fontFamily: 'monospace'
-              }}>
-                Message envoyé !
-              </h3>
-              <p style={{
-                color: 'rgba(102, 179, 255, 0.8)',
-                marginBottom: '2rem',
-                fontSize: '1rem'
-              }}>
-                Merci pour votre message. Je vous répondrai dans les plus brefs délais.
-              </p>
+              <h3 className="text-2xl font-bold">Message reçu !</h3>
+              <p className="text-blue-300/80">Je reviens vers vous dans les plus brefs délais.</p>
               <button
                 onClick={() => setSubmitted(false)}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  background: 'rgba(0, 0, 0, 0.6)',
-                  border: '2px solid rgba(51, 153, 255, 0.5)',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s',
-                  fontFamily: 'monospace',
-                  fontSize: '0.875rem',
-                  textTransform: 'uppercase',
-                  clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(51, 153, 255, 0.2)';
-                  e.currentTarget.style.borderColor = '#3399ff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
-                  e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.5)';
-                }}
+                className="px-8 py-3 bg-transparent border-2 border-blue-500/50 hover:bg-blue-500/10 transition-colors clip-path-btn"
               >
-                Envoyer un autre message
+                Envoyer un autre
               </button>
             </div>
           )}
         </div>
 
-        {/* Informations de contact */}
-        <div className="animate-slideIn" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '1.5rem',
-          marginTop: '4rem',
-          maxWidth: '1000px',
-          width: '100%',
-          position: 'relative',
-          zIndex: 10,
-          animationDelay: '0.4s'
-        }}>
-          {[
-            {
-              label: "Email",
-              value: "salifciss222@gmail.com",
-              href: "mailto:salifciss222@gmail.com",
-              icon: <Mail />,
-              color: "#3399ff",
-            },
-            {
-              label: "Téléphone",
-              value: "+221 77 227 49 87",
-              href: "tel:+221772274987",
-              icon: <Smartphone />,
-              color: "#cc00ff",
-            },
-            {
-              label: "LinkedIn",
-              value: "Salif Ciss",
-              href: "https://www.linkedin.com/in/salif-ciss-672990267",
-              icon: <BriefcaseBusiness />,
-              color: "#00cc66",
-            },
-          ].map(({ label, value, href, icon, color }) => (
+        {/* Contact Info Grid */}
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 w-full max-w-5xl">
+          {contactInfo.map((info) => (
             <a
-              key={label}
-              href={href}
+              key={info.label}
+              href={info.href}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                background: 'rgba(0, 0, 0, 0.6)',
-                backdropFilter: 'blur(20px)',
-                border: '2px solid rgba(51, 153, 255, 0.3)',
-                borderRadius: '15px',
-                padding: '1.5rem',
-                textAlign: 'center',
-                textDecoration: 'none',
-                transition: 'all 0.3s',
-                clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.borderColor = color;
-                e.currentTarget.style.boxShadow = `0 10px 40px ${color}40`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'rgba(51, 153, 255, 0.3)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
+              className={`group p-6 bg-black/40 backdrop-blur-md border border-blue-500/20 clip-path-cyber transition-all duration-300 flex flex-col items-center text-center ${info.color}`}
             >
-              <div style={{
-                width: '50px',
-                height: '50px',
-                background: `${color}30`,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1rem',
-                fontSize: '1.5rem',
-                border: `2px solid ${color}`,
-                transition: 'all 0.3s'
-              }}>
-                {icon}
+              <div className={`w-12 h-12 ${info.iconBg} ${info.iconCol} rounded-full flex items-center justify-center mb-4 border border-current shadow-inner group-hover:scale-110 transition-transform`}>
+                <info.icon size={20} />
               </div>
-              <h4 style={{
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                color: '#66b3ff',
-                marginBottom: '0.5rem',
-                fontFamily: 'monospace',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em'
-              }}>
-                {label}
-              </h4>
-              <p style={{
-                color: 'white',
-                fontWeight: 600,
-                fontSize: '0.875rem'
-              }}>
-                {value}
-              </p>
+              <span className="text-[10px] text-blue-400 tracking-[0.2em] mb-1 uppercase">{info.label}</span>
+              <span className="text-sm font-semibold truncate w-full">{info.value}</span>
             </a>
           ))}
         </div>
-
-        {/* Effet vignette */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.5) 100%)',
-          pointerEvents: 'none'
-        }} />
       </section>
     </>
   );
