@@ -23,6 +23,7 @@ const Contact = () => {
     setSendError(false);
   };
 
+  // --- LOGIQUE BACKEND AJOUTÉE ICI ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
@@ -31,20 +32,11 @@ const Contact = () => {
     setSendError(false);
 
     try {
-      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      // On appelle l'URL locale de Netlify Functions
+      const response = await fetch("/.netlify/functions/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          service_id: "service_y6770h8",
-          template_id: "template_x3ocm2k",
-          user_id: "XzWcGVv7BBmtNKG2d",
-          template_params: {
-            from_name: formData.name,
-            from_email: formData.email,
-            message: formData.message,
-            to_email: "salifciss222@gmail.com",
-          },
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -59,6 +51,7 @@ const Contact = () => {
       setIsLoading(false);
     }
   };
+  // -----------------------------------
 
   const contactInfo = [
     { label: "Email", value: "salifciss222@gmail.com", href: "mailto:salifciss222@gmail.com", icon: Mail, color: "hover:border-blue-500 hover:shadow-blue-500/20", iconBg: "bg-blue-500/20", iconCol: "text-blue-400" },
