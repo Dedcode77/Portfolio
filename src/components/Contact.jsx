@@ -23,16 +23,13 @@ const Contact = () => {
     setSendError(false);
   };
 
-  // --- LOGIQUE BACKEND AJOUTÉE ICI ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-
     setIsLoading(true);
     setSendError(false);
 
     try {
-      // On appelle l'URL locale de Netlify Functions
       const response = await fetch("/.netlify/functions/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,7 +48,6 @@ const Contact = () => {
       setIsLoading(false);
     }
   };
-  // -----------------------------------
 
   const contactInfo = [
     { label: "Email", value: "salifciss222@gmail.com", href: "mailto:salifciss222@gmail.com", icon: Mail, color: "hover:border-blue-500 hover:shadow-blue-500/20", iconBg: "bg-blue-500/20", iconCol: "text-blue-400" },
@@ -61,6 +57,7 @@ const Contact = () => {
 
   return (
     <>
+      {/* 1. STYLES SORTIS DE LA LOGIQUE CONDITIONNELLE */}
       <style>{`
         @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
         .animate-scan { animation: scan 8s linear infinite; }
@@ -80,85 +77,75 @@ const Contact = () => {
         </div>
 
         {/* Header */}
-        <div className="relative z-10 text-center mb-16 animate-in fade-in slide-in-from-bottom-5 duration-700">
+        <div className="relative z-10 text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 bg-black/60 border border-blue-500 rounded-full text-blue-400 text-sm">
             <span>✉️</span> RESTONS_EN_CONTACT
           </div>
-          <h2 className="text-4xl md:text-7xl font-black mb-4 text-blue-500 tracking-widest drop-shadow-[0_0_30px_rgba(51,153,255,0.8)] uppercase">
+          <h2 className="text-4xl md:text-7xl font-black mb-4 text-blue-500 tracking-widest uppercase">
             [ Contactez-moi ]
           </h2>
-          <p className="text-blue-300/80 max-w-2xl mx-auto text-lg">
-            Une question ? Une opportunité ? Un projet ? N'hésitez pas à me contacter.
-          </p>
         </div>
 
         {/* Form Container */}
-        <div className="relative z-10 w-full max-w-2xl bg-black/60 backdrop-blur-xl border-2 border-blue-500/30 p-8 md:p-12 clip-path-cyber shadow-2xl animate-in fade-in slide-in-from-bottom-10 duration-1000">
+        <div className="relative z-10 w-full max-w-2xl bg-black/60 backdrop-blur-xl border-2 border-blue-500/30 p-8 md:p-12 clip-path-cyber shadow-2xl">
           {!submitted ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {[
-                { label: "NOM_COMPLET", name: "name", type: "text", placeholder: "Votre nom" },
-                { label: "ADRESSE_EMAIL", name: "email", type: "email", placeholder: "votre@email.com" }
-              ].map((field) => (
-                <div key={field.name}>
-                  <label className="block text-sm text-blue-400 mb-2 uppercase tracking-tighter">{"> "} {field.label}</label>
-                  <input
-                    type={field.type}
-                    name={field.name}
-                    value={formData[field.name]}
+            /* 2. AJOUT D'UNE KEY UNIQUE POUR LE FORMULAIRE */
+            <div key="contact-form-side">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {[
+                  { label: "NOM_COMPLET", name: "name", type: "text", placeholder: "Votre nom" },
+                  { label: "ADRESSE_EMAIL", name: "email", type: "email", placeholder: "votre@email.com" }
+                ].map((field) => (
+                  <div key={field.name}>
+                    <label className="block text-sm text-blue-400 mb-2 uppercase tracking-tighter">{"> "} {field.label}</label>
+                    <input
+                      type={field.type}
+                      name={field.name}
+                      value={formData[field.name]}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      className={`w-full bg-black/50 border ${errors[field.name] ? 'border-red-500' : 'border-blue-500/30'} rounded-lg p-4 outline-none focus:border-blue-500 transition-all`}
+                    />
+                    {errors[field.name] && <span className="text-red-500 text-xs mt-1 block">⚠️ {errors[field.name]}</span>}
+                  </div>
+                ))}
+
+                <div>
+                  <label className="block text-sm text-blue-400 mb-2 uppercase tracking-tighter">{"> "} VOTRE_MESSAGE</label>
+                  <textarea
+                    name="message"
+                    rows="4"
+                    value={formData.message}
                     onChange={handleChange}
-                    placeholder={field.placeholder}
-                    className={`w-full bg-black/50 border ${errors[field.name] ? 'border-red-500' : 'border-blue-500/30'} rounded-lg p-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all`}
+                    placeholder="Décrivez votre projet..."
+                    className={`w-full bg-black/50 border ${errors.message ? 'border-red-500' : 'border-blue-500/30'} rounded-lg p-4 outline-none focus:border-blue-500 transition-all resize-none`}
                   />
-                  {errors[field.name] && <span className="text-red-500 text-xs mt-1 block">⚠️ {errors[field.name]}</span>}
                 </div>
-              ))}
 
-              <div>
-                <label className="block text-sm text-blue-400 mb-2 uppercase tracking-tighter">{"> "} VOTRE_MESSAGE</label>
-                <textarea
-                  name="message"
-                  rows="4"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Décrivez votre projet..."
-                  className={`w-full bg-black/50 border ${errors.message ? 'border-red-500' : 'border-blue-500/30'} rounded-lg p-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none`}
-                />
-                <div className="flex justify-between mt-1">
-                  {errors.message && <span className="text-red-500 text-xs block">⚠️ {errors.message}</span>}
-                  <span className="text-blue-400/50 text-[10px] ml-auto">{formData.message.length} caractères</span>
-                </div>
-              </div>
-
-              {sendError && (
-                <div className="flex gap-3 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-200 text-sm">
-                  <AlertTriangle className="shrink-0" />
-                  <p>Erreur d'envoi. Veuillez réessayer ou utiliser l'email direct.</p>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full group relative flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 font-bold uppercase tracking-widest clip-path-btn transition-all active:scale-95 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]'}`}
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                    Envoyer le message
-                  </>
+                {sendError && (
+                  <div className="flex gap-3 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-200 text-sm">
+                    <AlertTriangle className="shrink-0" />
+                    <p>Erreur d'envoi. Veuillez réessayer.</p>
+                  </div>
                 )}
-              </button>
-            </form>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full group flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 font-bold uppercase tracking-widest clip-path-btn transition-all ${isLoading ? 'opacity-50' : ''}`}
+                >
+                  {isLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send size={18} /> Envoyer</>}
+                </button>
+              </form>
+            </div>
           ) : (
-            <div className="text-center py-10 space-y-6 animate-in zoom-in duration-500">
+            /* 3. AJOUT D'UNE KEY UNIQUE POUR LE SUCCÈS */
+            <div key="contact-success-side" className="text-center py-10 space-y-6 animate-in zoom-in duration-500">
               <div className="w-20 h-20 bg-green-500/20 border-2 border-green-500 rounded-full flex items-center justify-center mx-auto text-green-500 shadow-[0_0_30px_rgba(34,197,94,0.4)]">
                 <CheckCircle2 size={40} />
               </div>
               <h3 className="text-2xl font-bold">Message reçu !</h3>
-              <p className="text-blue-300/80">Je reviens vers vous dans les plus brefs délais.</p>
+              <p className="text-blue-300/80">Je reviens vers vous vite.</p>
               <button
                 onClick={() => setSubmitted(false)}
                 className="px-8 py-3 bg-transparent border-2 border-blue-500/50 hover:bg-blue-500/10 transition-colors clip-path-btn"
