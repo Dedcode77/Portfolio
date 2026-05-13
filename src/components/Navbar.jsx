@@ -1,20 +1,23 @@
 import { useEffect, useState, useCallback } from 'react';
 
+
+const navLinks = [
+    // { label: "Accueil", to: "#hero", icon: "⌂" },
+    { label: "À propos", to: "#about"},
+    { label: "Compétences", to: "#skills" },
+    { label: "Projets", to: "#projects"},
+    // { label: "Certifications", to: "#certifications", icon: "◆" },
+    { label: "Contact", to: "#contact" },
+  ];
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('#hero');
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useState(0);
 
-  const navLinks = [
-    { label: "Accueil", to: "#hero", icon: "⌂" },
-    { label: "À propos", to: "#about", icon: "◉" },
-    { label: "Compétences", to: "#skills", icon: "◈" },
-    { label: "Projets", to: "#projects", icon: "◐" },
-    { label: "Certifications", to: "#certifications", icon: "◆" },
-    { label: "Contact", to: "#contact", icon: "◎" },
-  ];
+  
 
   useEffect(() => {
     let ticking = false;
@@ -25,13 +28,13 @@ const Navbar = () => {
           const currentScrollY = window.scrollY;
           
           // Détecter la direction du scroll
-          if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
             setIsVisible(false);
           } else {
             setIsVisible(true);
           }
           
-          setLastScrollY(currentScrollY);
+          lastScrollY.current = currentScrollY;
           setIsScrolled(currentScrollY > 20);
 
           // Détection de la section active

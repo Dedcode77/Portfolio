@@ -4,8 +4,7 @@ import { Smartphone, Star, AlarmClock, Globe, Settings, Laptop, Zap } from "luci
 const skillCategories = [
   {
     category: "Frontend",
-    icon: <Globe size={24} />,
-    color: "blue",
+    icon: Globe, // On passe le composant directement
     colorHex: "#3399ff",
     skills: [
       { name: "React", level: 90, desc: "Développement SPA & Hooks", yearsExp: "3+" },
@@ -16,8 +15,7 @@ const skillCategories = [
   },
   {
     category: "Backend",
-    icon: <Settings size={24} />,
-    color: "green",
+    icon: Settings,
     colorHex: "#00cc66",
     skills: [
       { name: "Node.js", level: 70, desc: "API REST & GraphQL", yearsExp: "2+" },
@@ -28,8 +26,7 @@ const skillCategories = [
   },
   {
     category: "Mobile & Cloud",
-    icon: <Smartphone size={24} />,
-    color: "purple",
+    icon: Smartphone,
     colorHex: "#cc00ff",
     skills: [
       { name: "Flutter", level: 65, desc: "Apps cross-platform", yearsExp: "1+" },
@@ -38,8 +35,7 @@ const skillCategories = [
   },
   {
     category: "Fondamentaux",
-    icon: <Laptop size={24} />,
-    color: "orange",
+    icon: Laptop,
     colorHex: "#ff6600",
     skills: [
       { name: "HTML", level: 90, desc: "Sémantique & SEO", yearsExp: "5+" },
@@ -49,6 +45,7 @@ const skillCategories = [
 ];
 
 // --- Sous-composant SkillCard optimisé ---
+// Utilisation d'une comparaison personnalisée pour éviter les re-renders inutiles
 const SkillCard = memo(({ skill, colorHex }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -67,7 +64,6 @@ const SkillCard = memo(({ skill, colorHex }) => {
         clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))'
       }}
     >
-      {/* Ligne d'accentuation animée */}
       <div 
         className="absolute top-0 left-0 h-[3px] transition-all duration-700 ease-in-out"
         style={{ 
@@ -77,7 +73,6 @@ const SkillCard = memo(({ skill, colorHex }) => {
         }}
       />
 
-      {/* Header Skill */}
       <div className="flex justify-between items-center mb-6 gap-4">
         <h4 className="text-xl font-black font-mono uppercase tracking-widest transition-colors duration-300"
             style={{ color: isHovered ? colorHex : '#66b3ff' }}>
@@ -91,7 +86,6 @@ const SkillCard = memo(({ skill, colorHex }) => {
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div className="mb-6 h-3 w-full bg-white/5 border border-blue-400/20 overflow-hidden relative"
            style={{ clipPath: 'polygon(1% 0, 99% 0, 100% 50%, 99% 100%, 1% 100%, 0 50%)' }}>
         <div 
@@ -120,7 +114,7 @@ const SkillCard = memo(({ skill, colorHex }) => {
       </div>
     </div>
   );
-});
+}, (prevProps, nextProps) => prevProps.skill.name === nextProps.skill.name);
 
 // --- Composant Principal ---
 const SkillsRadial = () => {
@@ -130,11 +124,11 @@ const SkillsRadial = () => {
     selectedCategory ? skillCategories.filter(cat => cat.category === selectedCategory) : skillCategories
   , [selectedCategory]);
 
-  const stats = [
-    { label: "Techs", value: skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0), icon: <Laptop className="text-blue-400" /> },
-    { label: "Projets", value: "12+", icon: <Star className="text-blue-400" /> },
-    { label: "Heures", value: "5k+", icon: <AlarmClock className="text-blue-400" /> },
-  ];
+  const stats = useMemo(() => [
+    { label: "Techs", value: skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0), icon: Laptop },
+    { label: "Projets", value: "12+", icon: Star },
+    { label: "Heures", value: "5k+", icon: AlarmClock },
+  ], []);
 
   return (
     <section className="relative min-h-screen bg-[#001a2e] text-white py-24 px-6 overflow-hidden font-sans">
@@ -155,7 +149,6 @@ const SkillsRadial = () => {
           
           <h2 className="text-5xl md:text-7xl font-black font-mono tracking-tighter mb-6 relative inline-block">
             <span className="text-blue-500 drop-shadow-[0_0_15px_rgba(51,153,255,0.5)]">[ COMPÉTENCES ]</span>
-            <span className="absolute inset-0 text-blue-300 opacity-20 animate-ping scale-105 pointer-events-none">[ COMPÉTENCES ]</span>
           </h2>
           <p className="text-blue-300/70 max-w-2xl mx-auto text-lg font-mono">
             Systèmes d'ingénierie logicielle et interfaces haute performance.
@@ -171,69 +164,79 @@ const SkillsRadial = () => {
           >
             TOUTES
           </button>
-          {skillCategories.map((cat) => (
-            <button
-              key={cat.category}
-              onClick={() => setSelectedCategory(cat.category)}
-              className="px-8 py-3 font-mono font-black border-2 transition-all duration-300 flex items-center gap-2 group"
-              style={{ 
-                clipPath: 'polygon(8% 0, 100% 0, 92% 100%, 0 100%)',
-                borderColor: selectedCategory === cat.category ? cat.colorHex : 'rgba(51,153,255,0.2)',
-                backgroundColor: selectedCategory === cat.category ? cat.colorHex : 'rgba(0,0,0,0.6)',
-                boxShadow: selectedCategory === cat.category ? `0 0 25px ${cat.colorHex}60` : 'none'
-              }}
-            >
-              <span className="group-hover:scale-125 transition-transform">{cat.icon}</span>
-              {cat.category.toUpperCase()}
-            </button>
-          ))}
+          {skillCategories.map((cat) => {
+            const Icon = cat.icon;
+            return (
+              <button
+                key={cat.category}
+                onClick={() => setSelectedCategory(cat.category)}
+                className="px-8 py-3 font-mono font-black border-2 transition-all duration-300 flex items-center gap-2 group"
+                style={{ 
+                  clipPath: 'polygon(8% 0, 100% 0, 92% 100%, 0 100%)',
+                  borderColor: selectedCategory === cat.category ? cat.colorHex : 'rgba(51,153,255,0.2)',
+                  backgroundColor: selectedCategory === cat.category ? cat.colorHex : 'rgba(0,0,0,0.6)',
+                  boxShadow: selectedCategory === cat.category ? `0 0 25px ${cat.colorHex}60` : 'none'
+                }}
+              >
+                <span className="group-hover:scale-125 transition-transform">
+                  <Icon size={24} />
+                </span>
+                {cat.category.toUpperCase()}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Liste des catégories et compétences */}
+        {/* Liste des catégories */}
         <div className="space-y-24">
-          {displayedCategories.map((category) => (
-            <div key={category.category} className="animate-in fade-in slide-in-from-bottom-10 duration-700">
-              <div className="flex items-center gap-6 mb-12 group">
-                <div className="w-16 h-16 flex items-center justify-center text-white shrink-0 transition-transform group-hover:rotate-12"
-                     style={{ 
-                        backgroundColor: category.colorHex, 
-                        clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-                        boxShadow: `0 0 30px ${category.colorHex}50` 
-                     }}>
-                  {category.icon}
+          {displayedCategories.map((category) => {
+            const CategoryIcon = category.icon;
+            return (
+              <div key={category.category} className="animate-in fade-in slide-in-from-bottom-10 duration-700">
+                <div className="flex items-center gap-6 mb-12 group">
+                  <div className="w-16 h-16 flex items-center justify-center text-white shrink-0 transition-transform group-hover:rotate-12"
+                       style={{ 
+                          backgroundColor: category.colorHex, 
+                          clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+                          boxShadow: `0 0 30px ${category.colorHex}50` 
+                       }}>
+                    <CategoryIcon size={24} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-3xl font-black font-mono tracking-widest uppercase italic" style={{ textShadow: `0 0 10px ${category.colorHex}` }}>
+                      {category.category}
+                    </h3>
+                    <p className="text-blue-400/60 font-mono text-sm uppercase tracking-tighter">
+                      Accès autorisé • <span style={{ color: category.colorHex }}>{category.skills.length}</span> Modules détectés
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-3xl font-black font-mono tracking-widest uppercase italic" style={{ textShadow: `0 0 10px ${category.colorHex}` }}>
-                    {category.category}
-                  </h3>
-                  <p className="text-blue-400/60 font-mono text-sm uppercase tracking-tighter">
-                    Accès autorisé • <span style={{ color: category.colorHex }}>{category.skills.length}</span> Modules détectés
-                  </p>
-                </div>
-                <div className="hidden md:block flex-1 h-[2px]" style={{ background: `linear-gradient(90deg, ${category.colorHex}, transparent)` }} />
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {category.skills.map((skill, idx) => (
-                  <SkillCard key={idx} skill={skill} colorHex={category.colorHex} />
-                ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {category.skills.map((skill) => (
+                    <SkillCard key={skill.name} skill={skill} colorHex={category.colorHex} />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Stats Section */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-32">
-          {stats.map((stat, i) => (
-            <div key={i} className="group bg-black/60 border-2 border-blue-900/50 p-10 text-center hover:border-blue-500 transition-all duration-500"
-                 style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))' }}>
-              <div className="flex justify-center mb-4 transform group-hover:scale-110 transition-transform">
-                {React.cloneElement(stat.icon, { size: 40 })}
+          {stats.map((stat, i) => {
+            const StatIcon = stat.icon;
+            return (
+              <div key={i} className="group bg-black/60 border-2 border-blue-900/50 p-10 text-center hover:border-blue-500 transition-all duration-500"
+                   style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))' }}>
+                <div className="flex justify-center mb-4 transform group-hover:scale-110 transition-transform text-blue-400">
+                  <StatIcon size={40} />
+                </div>
+                <div className="text-5xl font-black font-mono text-blue-500 mb-2">{stat.value}</div>
+                <div className="text-blue-300/50 font-mono tracking-[0.3em] uppercase text-sm">{stat.label}</div>
               </div>
-              <div className="text-5xl font-black font-mono text-blue-500 mb-2">{stat.value}</div>
-              <div className="text-blue-300/50 font-mono tracking-[0.3em] uppercase text-sm">{stat.label}</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

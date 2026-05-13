@@ -2,116 +2,127 @@ import React, { useState, useMemo } from "react";
 
 const allProjects = [
   {
-    title: "Système intelligent d'école",
-    description: "Plateforme IA pour la gestion prédictive des absences, notes et performances avec analyse en temps réel.",
+    id: "p1",
+    title: "Eco-Système Scolaire",
+    description: "Intelligence artificielle centralisée pour la prédiction des trajectoires académiques et la gestion automatisée des flux administratifs.",
     image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80",
-    stack: ["React", "Django", "Tailwind CSS"],
-    color: "shadow-blue-500/40",
-    border: "border-blue-500",
-    text: "text-blue-400",
-    bg: "bg-blue-500",
-    demo: "#",
-    code: "#",
-    status: "Production"
+    stack: ["React", "Django", "PostgreSQL"],
+    theme: {
+      accent: "text-cyan-400",
+      bg: "bg-cyan-500",
+      border: "border-cyan-500/50",
+      shadow: "shadow-cyan-500/20",
+      glow: "group-hover:shadow-cyan-500/40"
+    },
+    status: "LIVE_SYSTEM"
   },
   {
-    title: "Gestion formulaires IA",
-    description: "Générateur intelligent de formulaires avec validation automatique et analyse des réponses par IA.",
+    id: "p2",
+    title: "IA Form Generator",
+    description: "Moteur de génération dynamique de formulaires avec validation neuronale et analyse sémantique des entrées utilisateur.",
     image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
-    stack: ["Next.js", "Tailwind CSS"],
-    color: "shadow-purple-500/40",
-    border: "border-purple-500",
-    text: "text-purple-400",
-    bg: "bg-purple-500",
-    demo: "#",
-    code: "#",
-    status: "Production"
+    stack: ["Next.js", "Tailwind", "OpenAI"],
+    theme: {
+      accent: "text-purple-400",
+      bg: "bg-purple-500",
+      border: "border-purple-500/50",
+      shadow: "shadow-purple-500/20",
+      glow: "group-hover:shadow-purple-500/40"
+    },
+    status: "STABLE"
   },
   {
-    title: "E-learning immersif 3D",
-    description: "Expérience d'apprentissage 3D avec avatars personnalisables, suivi en temps réel et évaluation automatique.",
+    id: "p3",
+    title: "E-Learning 3.0",
+    description: "Environnement d'apprentissage immersif utilisant Firebase pour la synchronisation temps réel des avatars et des assets 3D.",
     image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
-    stack: ["React", "Firebase"],
-    color: "shadow-emerald-500/40",
-    border: "border-emerald-500",
-    text: "text-emerald-400",
-    bg: "bg-emerald-500",
-    demo: "#",
-    code: "#",
-    status: "Beta"
+    stack: ["Three.js", "Firebase", "React"],
+    theme: {
+      accent: "text-emerald-400",
+      bg: "bg-emerald-500",
+      border: "border-emerald-500/50",
+      shadow: "shadow-emerald-500/20",
+      glow: "group-hover:shadow-emerald-500/40"
+    },
+    status: "BETA_PHASE"
   }
 ];
 
-const STACKS = ["Tous", "React", "Django", "Flutter", "Firebase", "Tailwind CSS"];
+const STACKS = ["Tous", "React", "Django", "Next.js", "Firebase", "Three.js"];
 
 const ProjectCard = ({ project, index }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className={`group relative bg-black/60 border-2 ${project.border} rounded-xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${project.color} animate-in fade-in slide-in-from-bottom-5 duration-700`}
-         style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))' }}>
-      
-      <div className="grid md:grid-cols-2 gap-0">
-        {/* Image Section */}
-        <div className="relative h-80 overflow-hidden">
+    <div 
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`group relative bg-zinc-950/50 border ${project.theme.border} rounded-2xl transition-all duration-700 ${project.theme.glow} hover:shadow-2xl overflow-hidden`}
+      style={{
+        animationDelay: `${index * 150}ms`,
+        clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%)'
+      }}
+    >
+      <div className="grid lg:grid-cols-12 gap-0 min-h-[450px]">
+        
+        {/* Visual Engine */}
+        <div className="lg:col-span-5 relative overflow-hidden bg-black">
           <img 
             src={project.image} 
             alt={project.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-50 group-hover:brightness-90"
+            className={`w-full h-full object-cover transition-all duration-1000 ${isHovered ? 'scale-110 rotate-1 grayscale-0' : 'scale-100 grayscale-[0.5] opacity-60'}`}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-transparent mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent lg:bg-gradient-to-r" />
           
-          {/* Badge Statut */}
-          <div className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-black/80 border border-current rounded-full backdrop-blur-md">
-            <div className={`w-2 h-2 rounded-full animate-pulse ${project.bg} shadow-[0_0_10px_rgba(255,255,255,0.5)]`} />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">{project.status}</span>
+          {/* Static UI Elements */}
+          <div className="absolute top-6 left-6 py-1 px-3 bg-black/80 backdrop-blur-xl border border-white/10 rounded-sm">
+            <div className="flex items-center gap-2">
+              <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${project.theme.bg}`} />
+              <span className="text-[10px] font-mono text-white/70 tracking-[0.2em]">{project.status}</span>
+            </div>
           </div>
         </div>
 
-        {/* Content Section */}
-        <div className="p-8 md:p-12 flex flex-col justify-center">
-          <div className="flex items-center gap-3 mb-4">
-            <div className={`w-1 h-8 rounded-sm ${project.bg} shadow-lg`} />
-            <span className={`font-mono text-sm font-bold tracking-widest uppercase ${project.text}`}>
-              Projet #{String(index + 1).padStart(2, '0')}
+        {/* Intelligence Layer */}
+        <div className="lg:col-span-7 p-8 md:p-12 flex flex-col justify-center relative">
+          <div className="mb-6">
+            <span className={`text-xs font-mono font-bold tracking-[0.4em] ${project.theme.accent} opacity-70`}>
+              MODULE_0{index + 1}
             </span>
+            <h3 className={`text-4xl md:text-5xl font-black text-white mt-2 mb-4 tracking-tighter transition-all duration-500 ${isHovered ? 'translate-x-2' : ''}`}>
+              {project.title}
+            </h3>
+            <div className={`h-1 w-12 ${project.theme.bg} transition-all duration-500 ${isHovered ? 'w-24' : 'w-12'}`} />
           </div>
 
-          <h3 className="text-3xl md:text-4xl font-mono font-black text-white mb-4 leading-tight uppercase">
-            {project.title}
-          </h3>
-
-          <p className={`text-blue-100/70 leading-relaxed mb-6 font-sans transition-all duration-300 ${isExpanded ? '' : 'line-clamp-3'}`}>
+          <p className="text-zinc-400 text-lg leading-relaxed mb-8 max-w-xl font-light">
             {project.description}
           </p>
 
-          <button 
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-2 text-sm font-mono font-bold text-blue-400 hover:text-white transition-colors mb-6 w-fit"
-          >
-            {isExpanded ? 'VOIR MOINS ▲' : 'VOIR PLUS ▼'}
-          </button>
-
-          {/* Tech Stack */}
-          <div className="flex flex-wrap gap-2 mb-8">
-            {project.stack.map((tech) => tech && (
-              <span key={tech} className={`px-3 py-1 bg-black/60 border border-white/10 rounded-md text-xs font-mono font-semibold ${project.text}`}>
-                {tech}
+          <div className="flex flex-wrap gap-2 mb-10">
+            {project.stack.map((tech) => (
+              <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 text-[10px] font-mono text-zinc-500 hover:text-white hover:border-white/30 transition-colors cursor-default">
+                {tech.toUpperCase()}
               </span>
             ))}
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-wrap gap-4">
-            <a href={project.demo} className={`flex items-center gap-2 px-6 py-3 ${project.bg} text-white font-mono font-bold rounded-lg transition-all hover:scale-105 hover:brightness-110`}>
-              🌐 DEMO <span>→</span>
+          <div className="flex items-center gap-6">
+            <a href="#demo" className={`group/btn relative px-8 py-3 overflow-hidden rounded-full transition-all active:scale-95`}>
+                <div className={`absolute inset-0 ${project.theme.bg} opacity-20 group-hover/btn:opacity-100 transition-opacity`} />
+                <span className="relative text-sm font-black text-white tracking-widest flex items-center gap-2">
+                    INIT_DEMO <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
+                </span>
             </a>
-            <a href={project.code} className="flex items-center gap-2 px-6 py-3 bg-black/60 border-2 border-blue-500/50 text-white font-mono font-bold rounded-lg hover:bg-blue-500/20 transition-all hover:scale-105">
-              💻 CODE
+            <a href="#code" className="text-xs font-mono text-zinc-500 hover:text-white transition-colors border-b border-transparent hover:border-white py-1">
+              SRC_CODE
             </a>
           </div>
         </div>
       </div>
+      
+      {/* Decorative Corner */}
+      <div className={`absolute bottom-0 right-0 w-8 h-8 ${project.theme.bg} opacity-20`} style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }} />
     </div>
   );
 };
@@ -127,73 +138,55 @@ const Projects = () => {
   );
 
   return (
-    <section id="projects" className="relative min-h-screen bg-[#001a2e] py-20 px-4 overflow-hidden selection:bg-blue-500 selection:text-white">
-      
-      {/* Cyberpunk Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent top-0 animate-[scan_8s_linear_infinite] opacity-30 shadow-[0_0_20px_#3399ff]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(51,153,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(51,153,255,0.05)_1px,transparent_1px)] bg-[size:5%_5%]" />
-        <div className="absolute inset-0 bg-radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)" />
+    <section className="min-h-screen bg-[#020617] py-28 px-6 selection:bg-cyan-500 selection:text-white">
+      {/* Background Grid System */}
+      <div className="fixed inset-0 pointer-events-none opacity-20">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:60px_60px]" />
+        <div className="absolute inset-0 bg-radial-gradient(circle_at_center, transparent, #020617)" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1 bg-black/60 border border-blue-500 rounded-full text-blue-400 font-mono text-sm mb-6">
-            <span>🚀</span> INNOVATIONS_&_CRÉATIONS
+        <header className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-4 mb-4">
+               <div className="h-[1px] w-12 bg-cyan-500" />
+               <span className="text-cyan-500 font-mono text-xs tracking-[0.3em]">PROJETS_ARCHIVES</span>
+            </div>
+            <h2 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none uppercase">
+                Core<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-600">Engine</span>
+            </h2>
           </div>
-          <h2 className="text-5xl md:text-8xl font-mono font-black mb-6 tracking-tighter">
-            <span className="block text-white drop-shadow-2xl">PORTFOLIO</span>
-            <span className="block text-blue-500 drop-shadow-[0_0_15px_rgba(51,153,255,0.5)]">[ CRÉATIF ]</span>
-          </h2>
-          <p className="text-blue-300/60 max-w-2xl mx-auto text-lg md:text-xl">
-            Découvrez mes projets qui repoussent les limites de la technologie.
-          </p>
-        </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-16">
-          {STACKS.map((stack) => (
-            <button
-              key={stack}
-              onClick={() => setSelectedStack(stack)}
-              className={`px-6 py-2 rounded-full font-mono font-bold text-sm uppercase transition-all duration-300 border-2 
-                ${selectedStack === stack 
-                  ? "bg-blue-500 border-blue-400 text-white shadow-[0_0_20px_rgba(51,153,255,0.4)] scale-110" 
-                  : "bg-black/40 border-blue-500/30 text-blue-400 hover:border-blue-500 hover:bg-blue-500/10"
-                }`}
-            >
-              {stack}
-            </button>
-          ))}
-        </div>
+          <div className="flex flex-wrap gap-2 p-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
+            {STACKS.map((stack) => (
+              <button
+                key={stack}
+                onClick={() => setSelectedStack(stack)}
+                className={`px-6 py-2 rounded-xl font-mono text-[10px] tracking-widest uppercase transition-all
+                  ${selectedStack === stack 
+                    ? "bg-white text-black shadow-lg scale-105" 
+                    : "text-zinc-500 hover:text-white hover:bg-white/5"
+                  }`}
+              >
+                {stack}
+              </button>
+            ))}
+          </div>
+        </header>
 
-        {/* Projects List */}
-        <div className="space-y-12">
+        <div className="space-y-20">
           {filteredProjects.map((project, index) => (
-            <ProjectCard key={project.title} project={project} index={index} />
+            <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
 
-        {/* Empty State */}
         {filteredProjects.length === 0 && (
-          <div className="text-center py-20 animate-pulse">
-            <div className="text-6xl mb-4">✨</div>
-            <h3 className="text-2xl font-mono font-bold text-white mb-2">Aucun projet trouvé</h3>
-            <p className="text-blue-400/60 font-mono">Initialisation de nouveaux filtres recommandée...</p>
-          </div>
+            <div className="py-40 text-center">
+                <p className="text-zinc-600 font-mono italic animate-pulse tracking-widest text-xl">
+                    SYSTEM_ERROR: NO_DATA_MATCHED
+                </p>
+            </div>
         )}
-
-        {/* CTA */}
-        <div className="mt-24 text-center">
-          <div className="inline-block p-10 bg-black/60 border-2 border-blue-500 rounded-2xl backdrop-blur-xl group hover:border-blue-400 transition-colors"
-               style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))' }}>
-            <h3 className="text-2xl md:text-3xl font-mono font-bold text-white mb-4">Prêt à lancer un projet ?</h3>
-            <button className="px-8 py-4 bg-blue-500 hover:bg-blue-400 text-white font-mono font-black rounded-full transition-all hover:scale-110 shadow-[0_0_30px_rgba(51,153,255,0.4)]">
-              CONTACTEZ-MOI →
-            </button>
-          </div>
-        </div>
       </div>
     </section>
   );
